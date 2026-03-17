@@ -1,0 +1,481 @@
+@{
+    ViewData["Title"] = "KIT Fungsi Komposisi";
+}
+
+<style>
+    .kit-section {
+        border: 2px solid #333;
+        border-radius: 12px;
+        padding: 25px;
+        background: #fff;
+        margin-bottom: 30px;
+    }
+    .kit-section h4 {
+        margin-bottom: 5px;
+    }
+    .formula-input-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+    .formula-input-group label {
+        font-weight: bold;
+        font-size: 1.05rem;
+        min-width: 60px;
+    }
+    .formula-input-group input {
+        width: 200px;
+        font-size: 1rem;
+        padding: 6px 10px;
+        border: 2px solid #0d6efd;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+    }
+    .formula-input-group input:focus {
+        outline: none;
+        border-color: #0b5ed7;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+    }
+    .kit-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .kit-table th, .kit-table td {
+        border: 2px solid #333;
+        text-align: center;
+        padding: 10px;
+        font-size: 1rem;
+    }
+    .kit-table th {
+        font-weight: bold;
+        font-size: 0.95rem;
+    }
+    .kit-table .col-a { background: #e7f1ff; }
+    .kit-table .col-b { background: #fff3cd; }
+    .kit-table .col-c { background: #d1e7dd; }
+    .kit-table .col-d { background: #f8d7da; }
+    .kit-table th.col-a { background: #0d6efd; color: #fff; }
+    .kit-table th.col-b { background: #ffc107; color: #333; }
+    .kit-table th.col-c { background: #198754; color: #fff; }
+    .kit-table th.col-d { background: #dc3545; color: #fff; }
+    .kit-table input[type="number"] {
+        width: 100px;
+        text-align: center;
+        font-size: 1rem;
+        padding: 5px;
+        border: 2px solid #6c757d;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+    .kit-table input[type="number"]:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+    .kit-table input.correct {
+        border-color: #198754 !important;
+        background: #d1e7dd !important;
+    }
+    .kit-table input.wrong {
+        border-color: #dc3545 !important;
+        background: #f8d7da !important;
+    }
+    .feedback-cell {
+        font-size: 0.8rem;
+        font-weight: bold;
+        margin-top: 4px;
+        min-height: 18px;
+    }
+    .feedback-cell.benar { color: #198754; }
+    .feedback-cell.salah { color: #dc3545; }
+    .formula-warning {
+        color: #dc3545;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: none;
+    }
+    .contoh-box {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+    }
+    .contoh-box code {
+        background: #e9ecef;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.9rem;
+    }
+    .btn-cek {
+        margin-top: 15px;
+    }
+    .score-box {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+    .score-box.perfect { background: #d1e7dd; color: #0f5132; border: 2px solid #198754; }
+    .score-box.partial { background: #fff3cd; color: #664d03; border: 2px solid #ffc107; }
+    .score-box.fail { background: #f8d7da; color: #842029; border: 2px solid #dc3545; }
+</style>
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Fungsi Komposisi</a></li>
+            <li class="breadcrumb-item active">KIT Fungsi Komposisi</li>
+        </ol>
+    </nav>
+
+    <h3 class="mb-2">KIT Fungsi Komposisi Digital</h3>
+    <p class="text-muted mb-4">Masukkan rumus f(x) dan g(x), lalu isi tabel dengan jawaban yang benar.</p>
+
+    <!-- Input Rumus -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <strong>Masukkan Rumus Fungsi</strong>
+        </div>
+        <div class="card-body">
+            <div class="contoh-box">
+                <strong>Contoh format rumus yang diterima:</strong><br>
+                <code>x + 3</code> &nbsp; <code>2x + 5</code> &nbsp; <code>x</code> &nbsp; <code>3x</code> &nbsp;
+                <code>x^2 + 4</code> &nbsp; <code>2x^2</code> &nbsp; <code>x^2</code> &nbsp; <code>3x^2 + 1</code>
+            </div>
+            <div class="formula-input-group">
+                <label>f(x) =</label>
+                <input type="text" id="inputFx" placeholder="contoh: 2x + 3" value="2x + 1">
+            </div>
+            <div class="formula-input-group">
+                <label>g(x) =</label>
+                <input type="text" id="inputGx" placeholder="contoh: x^2 + 1" value="x^2">
+            </div>
+            <div id="formulaWarning" class="formula-warning">Input rumus sesuai contoh perintah</div>
+            <button class="btn btn-dark btn-sm" onclick="terapkanRumus()">Terapkan Rumus</button>
+            <div id="rumusAktif" class="mt-2" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Bagian 1: (g o f)(x) -->
+    <div class="kit-section" id="sectionGof">
+        <h4 class="text-primary">Fungsi Komposisi (g &#x25CB; f)(x)</h4>
+        <p class="text-muted mb-1">Langkah: substitusikan Kolom A ke f(x) &rarr; hasilnya ke g(x) &rarr; bandingkan dengan (g &#x25CB; f)(x)</p>
+        <p class="mb-3"><strong>f(x) = <span id="labelFx1">—</span></strong> &nbsp;&nbsp; <strong>g(x) = <span id="labelGx1">—</span></strong></p>
+
+        <div class="table-responsive">
+            <table class="kit-table" id="tableGof">
+                <thead>
+                    <tr>
+                        <th class="col-a">Kolom A<br><small>Nilai x</small></th>
+                        <th class="col-b">Kolom B<br><small>A &rarr; f(x)</small></th>
+                        <th class="col-c">Kolom C<br><small>B &rarr; g(x)</small></th>
+                        <th class="col-d">Kolom D<br><small>A &rarr; (g&#x25CB;f)(x)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-a"><strong>1</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="gof-b" data-row="0"><div class="feedback-cell" id="fb-gof-b-0"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="gof-c" data-row="0"><div class="feedback-cell" id="fb-gof-c-0"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="gof-d" data-row="0"><div class="feedback-cell" id="fb-gof-d-0"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>2</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="gof-b" data-row="1"><div class="feedback-cell" id="fb-gof-b-1"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="gof-c" data-row="1"><div class="feedback-cell" id="fb-gof-c-1"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="gof-d" data-row="1"><div class="feedback-cell" id="fb-gof-d-1"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>3</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="gof-b" data-row="2"><div class="feedback-cell" id="fb-gof-b-2"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="gof-c" data-row="2"><div class="feedback-cell" id="fb-gof-c-2"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="gof-d" data-row="2"><div class="feedback-cell" id="fb-gof-d-2"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>4</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="gof-b" data-row="3"><div class="feedback-cell" id="fb-gof-b-3"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="gof-c" data-row="3"><div class="feedback-cell" id="fb-gof-c-3"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="gof-d" data-row="3"><div class="feedback-cell" id="fb-gof-d-3"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary btn-cek" onclick="cekJawaban('gof')">Cek Jawaban (g &#x25CB; f)(x)</button>
+        <div id="scoreGof" class="mt-2"></div>
+    </div>
+
+    <!-- Bagian 2: (f o g)(x) -->
+    <div class="kit-section" id="sectionFog">
+        <h4 class="text-success">Fungsi Komposisi (f &#x25CB; g)(x)</h4>
+        <p class="text-muted mb-1">Langkah: substitusikan Kolom A ke g(x) &rarr; hasilnya ke f(x) &rarr; bandingkan dengan (f &#x25CB; g)(x)</p>
+        <p class="mb-3"><strong>f(x) = <span id="labelFx2">—</span></strong> &nbsp;&nbsp; <strong>g(x) = <span id="labelGx2">—</span></strong></p>
+
+        <div class="table-responsive">
+            <table class="kit-table" id="tableFog">
+                <thead>
+                    <tr>
+                        <th class="col-a">Kolom A<br><small>Nilai x</small></th>
+                        <th class="col-b">Kolom B<br><small>A &rarr; g(x)</small></th>
+                        <th class="col-c">Kolom C<br><small>B &rarr; f(x)</small></th>
+                        <th class="col-d">Kolom D<br><small>A &rarr; (f&#x25CB;g)(x)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-a"><strong>4</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="fog-b" data-row="0"><div class="feedback-cell" id="fb-fog-b-0"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="fog-c" data-row="0"><div class="feedback-cell" id="fb-fog-c-0"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="fog-d" data-row="0"><div class="feedback-cell" id="fb-fog-d-0"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>9</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="fog-b" data-row="1"><div class="feedback-cell" id="fb-fog-b-1"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="fog-c" data-row="1"><div class="feedback-cell" id="fb-fog-c-1"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="fog-d" data-row="1"><div class="feedback-cell" id="fb-fog-d-1"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>21</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="fog-b" data-row="2"><div class="feedback-cell" id="fb-fog-b-2"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="fog-c" data-row="2"><div class="feedback-cell" id="fb-fog-c-2"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="fog-d" data-row="2"><div class="feedback-cell" id="fb-fog-d-2"></div></td>
+                    </tr>
+                    <tr>
+                        <td class="col-a"><strong>30</strong></td>
+                        <td class="col-b"><input type="number" step="any" class="fog-b" data-row="3"><div class="feedback-cell" id="fb-fog-b-3"></div></td>
+                        <td class="col-c"><input type="number" step="any" class="fog-c" data-row="3"><div class="feedback-cell" id="fb-fog-c-3"></div></td>
+                        <td class="col-d"><input type="number" step="any" class="fog-d" data-row="3"><div class="feedback-cell" id="fb-fog-d-3"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-success btn-cek" onclick="cekJawaban('fog')">Cek Jawaban (f &#x25CB; g)(x)</button>
+        <div id="scoreFog" class="mt-2"></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // ==========================================
+    // Parser rumus: mendukung format sesuai PDF
+    // x + [N], [N]x + [N], x, [N]x,
+    // x^2 + [N], [N]x^2, x^2, [N]x^2 + [N]
+    // ==========================================
+
+    // State rumus aktif
+    let fFunc = null;
+    let gFunc = null;
+    let fRumus = '';
+    let gRumus = '';
+
+    // Nilai default kolom A
+    const valuesGof = [1, 2, 3, 4];
+    const valuesFog = [4, 9, 21, 30];
+
+    /**
+     * Parse string rumus menjadi function(x) => number
+     * Mendukung:  x + 3, 2x + 5, x, 3x, x^2 + 4, 2x^2, x^2, 3x^2 + 1
+     * Juga mendukung tanda negatif: x - 3, 2x^2 - 5, dll.
+     */
+    function parseRumus(str) {
+        str = str.replace(/\s+/g, ''); // hapus spasi
+
+        // Pattern: [a]x^2 [+/- b]
+        let m = str.match(/^([+-]?\d*)x\^2([+-]\d+)?$/);
+        if (m) {
+            const a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : parseFloat(m[1]));
+            const b = m[2] ? parseFloat(m[2]) : 0;
+            return (x) => a * x * x + b;
+        }
+
+        // Pattern: x^2 saja
+        if (str === 'x^2') {
+            return (x) => x * x;
+        }
+
+        // Pattern: [a]x [+/- b]
+        m = str.match(/^([+-]?\d*)x([+-]\d+)?$/);
+        if (m) {
+            const a = m[1] === '' || m[1] === '+' ? 1 : (m[1] === '-' ? -1 : parseFloat(m[1]));
+            const b = m[2] ? parseFloat(m[2]) : 0;
+            return (x) => a * x + b;
+        }
+
+        // Pattern: x saja
+        if (str === 'x') {
+            return (x) => x;
+        }
+
+        // Pattern: angka saja (konstanta)
+        m = str.match(/^([+-]?\d+(\.\d+)?)$/);
+        if (m) {
+            const c = parseFloat(m[1]);
+            return (x) => c;
+        }
+
+        return null; // tidak valid
+    }
+
+    function terapkanRumus() {
+        const fStr = document.getElementById('inputFx').value.trim();
+        const gStr = document.getElementById('inputGx').value.trim();
+        const warning = document.getElementById('formulaWarning');
+
+        const parsedF = parseRumus(fStr);
+        const parsedG = parseRumus(gStr);
+
+        if (!parsedF || !parsedG) {
+            warning.style.display = 'block';
+            warning.textContent = 'Input rumus sesuai contoh perintah';
+            return;
+        }
+
+        warning.style.display = 'none';
+        fFunc = parsedF;
+        gFunc = parsedG;
+        fRumus = fStr;
+        gRumus = gStr;
+
+        // Update label
+        document.getElementById('labelFx1').textContent = fStr;
+        document.getElementById('labelGx1').textContent = gStr;
+        document.getElementById('labelFx2').textContent = fStr;
+        document.getElementById('labelGx2').textContent = gStr;
+
+        // Tampilkan info rumus aktif
+        const info = document.getElementById('rumusAktif');
+        info.style.display = 'block';
+        info.innerHTML = '<span class="badge bg-primary">f(x) = ' + escapeHtml(fStr) + '</span> &nbsp; ' +
+                         '<span class="badge bg-success">g(x) = ' + escapeHtml(gStr) + '</span> &nbsp; ' +
+                         '<span class="text-success">&#10003; Rumus berhasil diterapkan!</span>';
+
+        // Reset semua input jawaban & feedback
+        resetAllInputs();
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function resetAllInputs() {
+        document.querySelectorAll('.gof-b, .gof-c, .gof-d, .fog-b, .fog-c, .fog-d').forEach(inp => {
+            inp.value = '';
+            inp.classList.remove('correct', 'wrong');
+        });
+        document.querySelectorAll('.feedback-cell').forEach(el => {
+            el.textContent = '';
+            el.className = 'feedback-cell';
+        });
+        document.getElementById('scoreGof').innerHTML = '';
+        document.getElementById('scoreFog').innerHTML = '';
+    }
+
+    /**
+     * Cek jawaban untuk tabel (g o f) atau (f o g)
+     */
+    function cekJawaban(mode) {
+        if (!fFunc || !gFunc) {
+            alert('Silakan masukkan dan terapkan rumus f(x) dan g(x) terlebih dahulu!');
+            return;
+        }
+
+        const values = mode === 'gof' ? valuesGof : valuesFog;
+        const prefix = mode === 'gof' ? 'gof' : 'fog';
+        let benar = 0;
+        let total = 0;
+
+        for (let i = 0; i < 4; i++) {
+            const a = values[i];
+            let expectedB, expectedC, expectedD;
+
+            if (mode === 'gof') {
+                // (g o f)(x): A → f(x) → g(f(x))
+                expectedB = fFunc(a);           // Kolom B = f(A)
+                expectedC = gFunc(expectedB);   // Kolom C = g(B) = g(f(A))
+                expectedD = gFunc(fFunc(a));    // Kolom D = (g o f)(A)
+            } else {
+                // (f o g)(x): A → g(x) → f(g(x))
+                expectedB = gFunc(a);           // Kolom B = g(A)
+                expectedC = fFunc(expectedB);   // Kolom C = f(B) = f(g(A))
+                expectedD = fFunc(gFunc(a));    // Kolom D = (f o g)(A)
+            }
+
+            // Cek Kolom B
+            total++;
+            const inputB = document.querySelector('.' + prefix + '-b[data-row="' + i + '"]');
+            const fbB = document.getElementById('fb-' + prefix + '-b-' + i);
+            if (cekNilai(inputB, expectedB, fbB)) benar++;
+
+            // Cek Kolom C
+            total++;
+            const inputC = document.querySelector('.' + prefix + '-c[data-row="' + i + '"]');
+            const fbC = document.getElementById('fb-' + prefix + '-c-' + i);
+            if (cekNilai(inputC, expectedC, fbC)) benar++;
+
+            // Cek Kolom D
+            total++;
+            const inputD = document.querySelector('.' + prefix + '-d[data-row="' + i + '"]');
+            const fbD = document.getElementById('fb-' + prefix + '-d-' + i);
+            if (cekNilai(inputD, expectedD, fbD)) benar++;
+        }
+
+        // Tampilkan skor
+        const scoreEl = document.getElementById(mode === 'gof' ? 'scoreGof' : 'scoreFog');
+        const persen = Math.round((benar / total) * 100);
+        let cssClass = 'fail';
+        if (persen === 100) cssClass = 'perfect';
+        else if (persen >= 50) cssClass = 'partial';
+
+        scoreEl.innerHTML = '<div class="score-box ' + cssClass + '">' +
+            'Skor: ' + benar + '/' + total + ' (' + persen + '%)' +
+            (persen === 100 ? ' — Sempurna!' : '') +
+            '</div>';
+    }
+
+    /**
+     * Cek satu nilai input terhadap expected, toleransi 0.01
+     */
+    function cekNilai(inputEl, expected, feedbackEl) {
+        const val = parseFloat(inputEl.value);
+        const exp = Math.round(expected * 100) / 100; // bulatkan 2 desimal
+
+        if (isNaN(val)) {
+            inputEl.classList.remove('correct');
+            inputEl.classList.add('wrong');
+            feedbackEl.textContent = 'Jawaban Salah';
+            feedbackEl.className = 'feedback-cell salah';
+            return false;
+        }
+
+        const valRounded = Math.round(val * 100) / 100;
+        if (Math.abs(valRounded - exp) < 0.01) {
+            inputEl.classList.remove('wrong');
+            inputEl.classList.add('correct');
+            feedbackEl.textContent = 'Jawaban anda benar';
+            feedbackEl.className = 'feedback-cell benar';
+            return true;
+        } else {
+            inputEl.classList.remove('correct');
+            inputEl.classList.add('wrong');
+            feedbackEl.textContent = 'Jawaban Salah';
+            feedbackEl.className = 'feedback-cell salah';
+            return false;
+        }
+    }
+
+    // Terapkan rumus default saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        terapkanRumus();
+    });
+</script>
+}

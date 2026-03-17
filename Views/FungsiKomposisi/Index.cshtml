@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Fungsi Komposisi & Fungsi Invers";
+}
+
+<div class="container py-4">
+    <h2 class="text-center mb-2">Pembelajaran Fungsi Komposisi & Fungsi Invers</h2>
+    <p class="text-center text-muted mb-4">Pilih salah satu kegiatan di bawah ini</p>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">💱</div>
+                    <h4 class="card-title">Penukaran Mata Uang</h4>
+                    <p class="card-text">
+                        Temukan konsep fungsi komposisi melalui masalah penukaran mata uang USD → MYR → IDR.
+                        Pahami bagaimana dua fungsi bisa digabungkan menjadi satu fungsi komposisi.
+                    </p>
+                    <a asp-action="PenukaranMataUang" class="btn btn-primary">Mulai Kegiatan</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm border-success">
+                <div class="card-body text-center">
+                    <div class="display-4 mb-3">🔧</div>
+                    <h4 class="card-title">KIT Fungsi Komposisi</h4>
+                    <p class="card-text">
+                        Gunakan KIT digital interaktif untuk bereksperimen dengan fungsi komposisi.
+                        Masukkan angka, lihat hasil, dan temukan bahwa (f∘g)(x) ≠ (g∘f)(x).
+                    </p>
+                    <a asp-action="KitKomposisi" class="btn btn-success">Mulai Kegiatan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

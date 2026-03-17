@@ -1,0 +1,259 @@
+@{
+    ViewData["Title"] = "Penukaran Mata Uang - Fungsi Komposisi";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Fungsi Komposisi</a></li>
+            <li class="breadcrumb-item active">Penukaran Mata Uang</li>
+        </ol>
+    </nav>
+
+    <h3 class="mb-3">Menemukan Konsep Fungsi Komposisi</h3>
+
+    <!-- Soal Cerita -->
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white"><strong>Masalah</strong></div>
+        <div class="card-body" style="font-size: 0.95rem;">
+            <p>Suatu Bank di Amerika menawarkan harga tukar:</p>
+            <ul>
+                <li><strong>1 USD = 3,58 MYR</strong> dengan biaya penukaran <strong>2 USD</strong> per transaksi</li>
+                <li><strong>1 USD = Rp 12.768,99</strong></li>
+            </ul>
+            <p>Bank di Malaysia menawarkan:</p>
+            <ul>
+                <li><strong>1 MYR = Rp 3.656,27</strong> dengan biaya penukaran <strong>3 MYR</strong> per transaksi</li>
+            </ul>
+            <p>Biaya penukaran IDR ke MYR dari bank di Indonesia: <strong>Rp 25.000</strong></p>
+            <p class="mb-0">Seorang turis Amerika membawa <strong>4.000 USD</strong>, ingin ke Malaysia lalu ke Indonesia.
+            Jika <strong>2.000 USD</strong> ditukarkan ke MYR di Amerika, lalu seluruhnya ditukarkan ke IDR di Malaysia, berapa IDR yang diterima?</p>
+        </div>
+    </div>
+
+    <!-- LKPD Steps -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white"><strong>Lembar Kegiatan Peserta Didik (LKPD)</strong></div>
+        <div class="card-body">
+
+            <!-- Step 1 -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <h5>Langkah 1: Tentukan Fungsi x(t) dan y(x)</h5>
+                <p>Jika <strong>t</strong> = jumlah uang dalam USD, <strong>x</strong> = jumlah uang dalam MYR, dan <strong>y</strong> = jumlah uang dalam IDR:</p>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label"><strong>Fungsi x(t) — USD ke MYR:</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">x(t) =</span>
+                            <input type="text" id="fungsiX" class="form-control" placeholder="contoh: 3.58 * (t - 2)">
+                        </div>
+                        <small class="text-muted">Ingat: kurs 1 USD = 3,58 MYR, biaya 2 USD</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label"><strong>Fungsi y(x) — MYR ke IDR:</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-text">y(x) =</span>
+                            <input type="text" id="fungsiY" class="form-control" placeholder="contoh: 3656.27 * (x - 3)">
+                        </div>
+                        <small class="text-muted">Ingat: kurs 1 MYR = Rp 3.656,27, biaya 3 MYR</small>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary btn-sm" onclick="cekFungsi()">Cek Jawaban</button>
+                <div id="hasilCekFungsi" class="mt-2"></div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <h5>Langkah 2: Hitung Nilai Fungsi</h5>
+                <p>Masukkan jumlah USD yang akan ditukarkan:</p>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Jumlah USD (t):</label>
+                        <input type="number" id="nilaiT" class="form-control" value="2000">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" onclick="hitungBertahap()">Hitung</button>
+                    </div>
+                </div>
+
+                <div id="hasilBertahap" class="mt-3" style="display:none;">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">USD</small>
+                                    <h4 id="showUSD" class="text-warning">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-info" id="cardMYR" style="opacity:0; transition: opacity 0.8s;">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">x(t) = MYR</small>
+                                    <h4 id="showMYR" class="text-info">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-success" id="cardIDR" style="opacity:0; transition: opacity 0.8s;">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">y(x) = IDR</small>
+                                    <h4 id="showIDR" class="text-success">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span class="badge bg-secondary">USD → MYR → IDR (bertahap)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Komposisi -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <h5>Langkah 3: Temukan Fungsi Komposisi f(t)</h5>
+                <p>Substitusikan fungsi x(t) ke dalam fungsi y(x) untuk mendapatkan <strong>f(t) = (y ∘ x)(t)</strong></p>
+
+                <button class="btn btn-success" onclick="hitungKomposisi()">Hitung f(t) = y(x(t))</button>
+
+                <div id="hasilKomposisi" class="mt-3" style="display:none;">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <p><strong>x(t)</strong> = 3,58 × (t − 2)</p>
+                            <p><strong>y(x)</strong> = 3.656,27 × (x − 3)</p>
+                            <hr>
+                            <p><strong>f(t) = y(x(t))</strong> = 3.656,27 × (3,58 × (t − 2) − 3)</p>
+                            <p><strong>f(t)</strong> = 3.656,27 × (3,58t − 7,16 − 3)</p>
+                            <p><strong>f(t)</strong> = 3.656,27 × (3,58t − 10,16)</p>
+                            <hr>
+                            <p>Untuk t = <span id="tKomposisi">2000</span>:</p>
+                            <h4 class="text-success">f(t) = <span id="nilaiKomposisi">-</span> IDR</h4>
+                            <div class="alert alert-info mt-2" id="bandingKomposisi">
+                                Bandingkan dengan hasil perhitungan bertahap di atas. <strong>Apakah hasilnya sama?</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Jalur Berbeda -->
+            <div class="mb-4 p-3 bg-light rounded">
+                <h5>Langkah 4: Bagaimana Jika Urutannya Berbeda?</h5>
+                <p>Jika turis menukar <strong>USD → IDR</strong> dulu di Amerika (biaya 2 USD, kurs 1 USD = Rp 12.768,99),
+                lalu <strong>IDR → MYR</strong> di Indonesia (biaya Rp 25.000):</p>
+
+                <button class="btn btn-warning" onclick="hitungJalurBerbeda()">Hitung Jalur USD → IDR → MYR</button>
+
+                <div id="hasilJalurBerbeda" class="mt-3" style="display:none;">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">USD</small>
+                                    <h4 class="text-warning">2.000</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-danger">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">x(t) = IDR</small>
+                                    <h4 id="showIDR2" class="text-danger">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <small class="text-muted">y(x) = MYR</small>
+                                    <h4 id="showMYR2" class="text-primary">-</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mt-3">
+                        <strong>Kesimpulan:</strong> Urutan komposisi menghasilkan nilai yang <strong>berbeda</strong>!
+                        Ini membuktikan bahwa <strong>(f ∘ g)(x) ≠ (g ∘ f)(x)</strong> — komposisi fungsi <strong>tidak komutatif</strong>.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function formatRupiah(num) {
+        return num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+    }
+
+    function cekFungsi() {
+        const fx = document.getElementById('fungsiX').value.trim().toLowerCase().replace(/\s/g, '');
+        const fy = document.getElementById('fungsiY').value.trim().toLowerCase().replace(/\s/g, '');
+        let el = document.getElementById('hasilCekFungsi');
+
+        let xCorrect = fx.includes('3.58') && (fx.includes('t-2') || fx.includes('(t-2)'));
+        let yCorrect = fy.includes('3656.27') && (fy.includes('x-3') || fy.includes('(x-3)'));
+
+        let msg = '';
+        if (xCorrect && yCorrect) {
+            msg = '<span class="text-success"><strong>Benar!</strong> x(t) = 3,58(t − 2) dan y(x) = 3.656,27(x − 3)</span>';
+        } else {
+            msg = '<span class="text-danger">Coba periksa lagi. Perhatikan kurs dan biaya penukarannya.</span>';
+            if (!xCorrect) msg += '<br><small class="text-muted">Hint x(t): jumlah USD dikurangi biaya, lalu dikali kurs MYR</small>';
+            if (!yCorrect) msg += '<br><small class="text-muted">Hint y(x): jumlah MYR dikurangi biaya, lalu dikali kurs IDR</small>';
+        }
+        el.innerHTML = msg;
+    }
+
+    function hitungBertahap() {
+        const t = parseFloat(document.getElementById('nilaiT').value);
+        if (isNaN(t) || t <= 2) { alert('Masukkan nilai USD yang valid (> 2)'); return; }
+
+        const myr = 3.58 * (t - 2);
+        const idr = 3656.27 * (myr - 3);
+
+        document.getElementById('showUSD').textContent = formatRupiah(t);
+        document.getElementById('showMYR').textContent = formatRupiah(myr);
+        document.getElementById('showIDR').textContent = 'Rp ' + formatRupiah(idr);
+
+        document.getElementById('hasilBertahap').style.display = 'block';
+
+        setTimeout(() => { document.getElementById('cardMYR').style.opacity = '1'; }, 300);
+        setTimeout(() => { document.getElementById('cardIDR').style.opacity = '1'; }, 800);
+    }
+
+    function hitungKomposisi() {
+        const t = parseFloat(document.getElementById('nilaiT').value) || 2000;
+        const result = 3656.27 * (3.58 * (t - 2) - 3);
+
+        document.getElementById('tKomposisi').textContent = formatRupiah(t);
+        document.getElementById('nilaiKomposisi').textContent = 'Rp ' + formatRupiah(result);
+        document.getElementById('hasilKomposisi').style.display = 'block';
+
+        // Bandingkan
+        const myr = 3.58 * (t - 2);
+        const idrBertahap = 3656.27 * (myr - 3);
+        const sama = Math.abs(result - idrBertahap) < 0.01;
+
+        document.getElementById('bandingKomposisi').innerHTML = sama
+            ? '<strong>Hasilnya SAMA!</strong> Ini membuktikan bahwa f(t) = y(x(t)) adalah fungsi komposisi yang benar. Menghitung bertahap atau langsung menggunakan fungsi komposisi menghasilkan nilai yang sama.'
+            : '<strong>Hasilnya berbeda.</strong> Coba periksa kembali perhitunganmu.';
+    }
+
+    function hitungJalurBerbeda() {
+        const t = 2000;
+        // USD -> IDR: kurs 12768.99, biaya 2 USD
+        const idr = 12768.99 * (t - 2);
+        // IDR -> MYR: kurs 1/3656.27, biaya 25000
+        const myr = (idr - 25000) / 3656.27;
+
+        document.getElementById('showIDR2').textContent = 'Rp ' + formatRupiah(idr);
+        document.getElementById('showMYR2').textContent = formatRupiah(myr) + ' MYR';
+        document.getElementById('hasilJalurBerbeda').style.display = 'block';
+    }
+</script>
+}

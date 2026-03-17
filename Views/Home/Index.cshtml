@@ -1,0 +1,49 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold">KIT Matematika Digital</h1>
+        <p class="lead text-muted">SMA-SMK — Matematika Kelas 10, 11 dan 12</p>
+        <p>Alat peraga matematika digital interaktif untuk membantu peserta didik menemukan konsep matematika secara mandiri.</p>
+    </div>
+
+    <h4 class="mb-3">Pilih Topik Pembelajaran:</h4>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Fungsi Komposisi & Fungsi Invers</h5>
+                    <span class="badge bg-primary mb-2">Kelas 11</span>
+                    <p class="card-text">Temukan konsep fungsi komposisi melalui penukaran mata uang dan KIT interaktif. Buktikan bahwa (f∘g)(x) ≠ (g∘f)(x).</p>
+                    <a asp-controller="FungsiKomposisi" asp-action="Index" class="btn btn-outline-primary">Mulai</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder untuk topik lainnya -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm text-muted">
+                <div class="card-body">
+                    <h5 class="card-title">Eksponen</h5>
+                    <span class="badge bg-secondary mb-2">Kelas 10</span>
+                    <p class="card-text">Temukan sifat-sifat eksponen melalui percobaan interaktif.</p>
+                    <button class="btn btn-outline-secondary" disabled>Segera Hadir</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm text-muted">
+                <div class="card-body">
+                    <h5 class="card-title">Matriks</h5>
+                    <span class="badge bg-secondary mb-2">Kelas 11</span>
+                    <p class="card-text">Pelajari perkalian, transpose, determinan, dan invers matriks.</p>
+                    <button class="btn btn-outline-secondary" disabled>Segera Hadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
