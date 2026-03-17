@@ -1,50 +1,150 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - KitMatematikaDigital</title>
+    <title>@ViewData["Title"] - KIT Matematika</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/KitMatematikaDigital.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+
+        /* Header */
+        .top-header {
+            background: #2c5f7c;
+            color: #fff;
+            padding: 0 30px;
+            font-size: 1.6rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .burger-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .burger-btn .bar {
+            width: 24px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 240px;
+            height: calc(100vh - 60px);
+            background: #234d63;
+            transition: width 0.3s ease;
+            z-index: 999;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .sidebar.collapsed { width: 56px; }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.85);
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            border-left-color: #e67e22;
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar .nav-link .nav-icon {
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+        .sidebar.collapsed .nav-link span { display: none; }
+        .sidebar.collapsed .nav-link { justify-content: center; padding: 14px 0; }
+
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+            transition: margin-left 0.3s ease;
+            background: #f5f7fa;
+        }
+        .sidebar.collapsed ~ .main-content { margin-left: 56px; }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">KitMatematikaDigital</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FungsiKomposisi" asp-action="Index">Fungsi Komposisi & Invers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <!-- Header -->
+    <div class="top-header">
+        <button class="burger-btn" id="burgerBtn" onclick="toggleSidebar()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+        KIT MATEMATIKA SMA-SMK
+    </div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
+           asp-controller="Home" asp-action="Index">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Beranda</span>
+        </a>
+        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FungsiKomposisi" ? "active" : "")"
+           asp-controller="FungsiKomposisi" asp-action="KitKomposisi">
+            <i class="fas fa-calculator nav-icon"></i>
+            <span>Fungsi Komposisi</span>
+        </a>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - KitMatematikaDigital - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
