@@ -1,0 +1,381 @@
+@{
+    ViewData["Title"] = "Matrix";
+}
+
+<style>
+    .kit-container { padding: 30px 35px; }
+    .kit-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: #2c5f7c; }
+    .kit-title-bar { border: none; border-top: 3px solid #e67e22; width: 60px; margin: 0 0 22px 0; }
+
+    .mtx-warning {
+        position: sticky; top: 70px; z-index: 50;
+        color: #b02a37; font-weight: 600; font-size: 0.9rem;
+        padding: 10px 16px; background: #fff3f3; border: 1px solid #f5c6cb;
+        border-radius: 8px; margin-bottom: 16px; display: none;
+    }
+    .mtx-warning i { margin-right: 6px; }
+
+    /* Tabs */
+    .kit-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 0; }
+    .kit-tab {
+        padding: 11px 22px; background: #dce6ec; color: #2c5f7c; border: none;
+        cursor: pointer; font-weight: bold; font-size: 0.92rem;
+        border-radius: 10px 10px 0 0; transition: background .3s, color .3s;
+    }
+    .kit-tab:hover { background: #c5d5df; }
+    .kit-tab.active { background: #2c5f7c; color: #fff; }
+    .kit-panel {
+        display: none; background: #fff; border: 2px solid #2c5f7c;
+        border-radius: 0 10px 10px 10px; padding: 28px 26px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .kit-panel.active { display: block; animation: fadeIn .4s ease; }
+
+    .panel-head { font-weight: 700; color: #2c5f7c; letter-spacing: .5px; margin-bottom: 18px; font-size: 1.05rem; }
+    .mtx-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .mtx-lead { font-weight: 600; color: #444; font-style: italic; }
+    .op { font-size: 1.3rem; color: #555; font-weight: 600; margin: 0 2px; }
+    .sup-t { font-size: 0.7em; vertical-align: super; font-weight: 700; }
+
+    /* Matrix bracket */
+    .matrix { display: inline-flex; align-items: stretch; }
+    .matrix .br { width: 9px; border: 2.5px solid #2c5f7c; }
+    .matrix .br.l { border-right: none; border-radius: 5px 0 0 5px; }
+    .matrix .br.r { border-left: none; border-radius: 0 5px 5px 0; }
+    .matrix .grid { display: grid; grid-template-columns: repeat(2, auto); gap: 7px; padding: 8px 7px; }
+    .matrix .grid.expand { gap: 9px 16px; }
+    .num-static {
+        width: 40px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+        font-weight: 600; color: #555; font-size: 1rem;
+    }
+
+    .mtx-cell {
+        width: 42px; height: 34px; text-align: center;
+        border: 2px solid #d0dce4; border-radius: 6px; background: #f8fafb;
+        font-size: 0.95rem; font-weight: 600; color: #2c5f7c;
+        transition: border-color .25s, background .25s, box-shadow .25s;
+    }
+    .mtx-cell::-webkit-outer-spin-button, .mtx-cell::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .mtx-cell { -moz-appearance: textfield; }
+    .mtx-cell:focus { outline: none; border-color: #e67e22; background: #fff; box-shadow: 0 0 7px rgba(230,126,34,0.25); }
+    .mtx-cell.correct { border-color: #2ecc71 !important; background: #eafaf1 !important; }
+    .mtx-cell.wrong { border-color: #e74c3c !important; background: #fdf2f2 !important; }
+    .mtx-cell.src { border-style: dashed; }
+
+    .expand-term { display: inline-flex; align-items: center; gap: 3px; font-size: 0.9rem; white-space: nowrap; }
+    .expand-term .mtx-cell { width: 38px; height: 30px; font-size: 0.85rem; }
+
+    .hint { font-size: 0.82rem; color: #6b8a99; font-style: italic; margin-top: 4px; }
+    .frac-coef { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin-right: 4px; }
+    .frac-coef .top { border-bottom: 2px solid #555; padding: 0 8px 2px; }
+    .frac-coef .bot { padding: 2px 8px 0; display: flex; align-items: center; gap: 4px; }
+
+    .kit-btn {
+        padding: 9px 26px; border: none; border-radius: 8px; cursor: pointer;
+        font-weight: 600; font-size: 0.9rem; color: #c0392b;
+        background: #fff; border: 1px solid #e3a9a1; transition: background .2s; margin-top: 20px;
+    }
+    .kit-btn:hover { background: #fdf2f2; }
+
+    @@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="kit-container">
+    <div class="kit-title">Matrix</div>
+    <hr class="kit-title-bar">
+
+    <div class="mtx-warning" id="mtxWarning">
+        <i class="fas fa-triangle-exclamation"></i> Periksa Kembali &mdash; ada isian yang belum sesuai kaidah matriks.
+    </div>
+
+    <div class="kit-tabs">
+        <button class="kit-tab active" onclick="switchTab('mul')">Perkalian</button>
+        <button class="kit-tab" onclick="switchTab('trn')">Transpose</button>
+        <button class="kit-tab" onclick="switchTab('idn')">Identitas</button>
+        <button class="kit-tab" onclick="switchTab('det')">Determinan Ordo 2&times;2</button>
+        <button class="kit-tab" onclick="switchTab('inv')">Invers</button>
+    </div>
+
+    <!-- ============ PERKALIAN ============ -->
+    <div class="kit-panel active" id="panel-mul">
+        <div class="panel-head">PERKALIAN MATRIKS</div>
+        <div class="hint" style="margin-bottom:14px;">Isi matriks A dan B (bebas), lalu lengkapi penjabaran dan hasilnya. C<sub>ij</sub> = baris A &times; kolom B.</div>
+        <div class="mtx-row">
+            <span class="mtx-lead">A =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a11">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a12">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a21">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a22">
+            </span><span class="br r"></span></span>
+            <span class="op">&times;</span>
+            <span class="mtx-lead">B =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b11">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b12">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b21">
+                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b22">
+            </span><span class="br r"></span></span>
+        </div>
+
+        <div class="mtx-row">
+            <span class="op">=</span>
+            <span class="matrix"><span class="br l"></span><span class="grid expand">
+                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b21">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b22">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b21">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b22">)</span>
+            </span><span class="br r"></span></span>
+        </div>
+
+        <div class="mtx-row">
+            <span class="op">=</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="mul" data-calc="c11">
+                <input type="number" class="mtx-cell" data-tab="mul" data-calc="c12">
+                <input type="number" class="mtx-cell" data-tab="mul" data-calc="c21">
+                <input type="number" class="mtx-cell" data-tab="mul" data-calc="c22">
+            </span><span class="br r"></span></span>
+        </div>
+    </div>
+
+    <!-- ============ TRANSPOSE ============ -->
+    <div class="kit-panel" id="panel-trn">
+        <div class="panel-head">TRANSPOSE MATRIKS</div>
+        <div class="hint" style="margin-bottom:14px;">Isi matriks A (bebas), lalu tukar baris menjadi kolom pada A<sup>T</sup>.</div>
+        <div class="mtx-row">
+            <span class="mtx-lead">A =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="trn" data-src="a">
+                <input type="number" class="mtx-cell src" data-tab="trn" data-src="b">
+                <input type="number" class="mtx-cell src" data-tab="trn" data-src="c">
+                <input type="number" class="mtx-cell src" data-tab="trn" data-src="d">
+            </span><span class="br r"></span></span>
+            <span style="width:30px;"></span>
+            <span class="mtx-lead">A<span class="sup-t">T</span> =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="trn" data-grp="a">
+                <input type="number" class="mtx-cell" data-tab="trn" data-grp="c">
+                <input type="number" class="mtx-cell" data-tab="trn" data-grp="b">
+                <input type="number" class="mtx-cell" data-tab="trn" data-grp="d">
+            </span><span class="br r"></span></span>
+        </div>
+    </div>
+
+    <!-- ============ IDENTITAS ============ -->
+    <div class="kit-panel" id="panel-idn">
+        <div class="panel-head">MATRIKS IDENTITAS (I) =
+            <span class="matrix" style="vertical-align:middle;"><span class="br l"></span><span class="grid">
+                <span class="num-static">1</span><span class="num-static">0</span>
+                <span class="num-static">0</span><span class="num-static">1</span>
+            </span><span class="br r"></span></span>
+        </div>
+        <div class="hint" style="margin-bottom:14px;">Isi matriks A (bebas). Buktikan bahwa I &times; A = A dan A &times; I = A.</div>
+
+        <div class="mtx-row">
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <span class="num-static">1</span><span class="num-static">0</span>
+                <span class="num-static">0</span><span class="num-static">1</span>
+            </span><span class="br r"></span></span>
+            <span class="op">&times;</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="idn" data-src="a">
+                <input type="number" class="mtx-cell src" data-tab="idn" data-src="b">
+                <input type="number" class="mtx-cell src" data-tab="idn" data-src="c">
+                <input type="number" class="mtx-cell src" data-tab="idn" data-src="d">
+            </span><span class="br r"></span></span>
+            <span class="op">=</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+            </span><span class="br r"></span></span>
+        </div>
+
+        <div class="mtx-row">
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+            </span><span class="br r"></span></span>
+            <span class="op">&times;</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <span class="num-static">1</span><span class="num-static">0</span>
+                <span class="num-static">0</span><span class="num-static">1</span>
+            </span><span class="br r"></span></span>
+            <span class="op">=</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+            </span><span class="br r"></span></span>
+        </div>
+    </div>
+
+    <!-- ============ DETERMINAN ============ -->
+    <div class="kit-panel" id="panel-det">
+        <div class="panel-head">DETERMINAN MATRIKS ORDO 2&times;2</div>
+        <div class="hint" style="margin-bottom:14px;">Isi matriks A (bebas), lalu hitung det A = ad &minus; bc.</div>
+        <div class="mtx-row">
+            <span class="mtx-lead">A =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="det" data-src="a">
+                <input type="number" class="mtx-cell src" data-tab="det" data-src="b">
+                <input type="number" class="mtx-cell src" data-tab="det" data-src="c">
+                <input type="number" class="mtx-cell src" data-tab="det" data-src="d">
+            </span><span class="br r"></span></span>
+        </div>
+        <div class="mtx-row">
+            <span class="mtx-lead">maka det A =</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-grp="a">
+            <span class="op">&times;</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-grp="d">
+            <span class="op">&minus;</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-grp="b">
+            <span class="op">&times;</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-grp="c">
+        </div>
+        <div class="mtx-row">
+            <span class="op">=</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-calc="p1">
+            <span class="op">&minus;</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-calc="p2">
+            <span class="op">=</span>
+            <input type="number" class="mtx-cell" data-tab="det" data-calc="res">
+        </div>
+    </div>
+
+    <!-- ============ INVERS ============ -->
+    <div class="kit-panel" id="panel-inv">
+        <div class="panel-head">INVERS MATRIKS</div>
+        <div class="hint" style="margin-bottom:14px;">Isi matriks A (bebas). A<sup>&minus;1</sup> = 1/det A &times; adjoin A, dengan adjoin A =
+            <span class="matrix" style="vertical-align:middle;"><span class="br l"></span><span class="grid"><span class="num-static">d</span><span class="num-static">&minus;b</span><span class="num-static">&minus;c</span><span class="num-static">a</span></span><span class="br r"></span></span>
+        </div>
+        <div class="mtx-row">
+            <span class="mtx-lead">A =</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell src" data-tab="inv" data-src="a">
+                <input type="number" class="mtx-cell src" data-tab="inv" data-src="b">
+                <input type="number" class="mtx-cell src" data-tab="inv" data-src="c">
+                <input type="number" class="mtx-cell src" data-tab="inv" data-src="d">
+            </span><span class="br r"></span></span>
+        </div>
+        <div class="mtx-row">
+            <span class="mtx-lead">A<span class="sup-t">&minus;1</span> =</span>
+            <span class="frac-coef">
+                <span class="top">1</span>
+                <span class="bot">
+                    <input type="number" class="mtx-cell" data-tab="inv" data-grp="a"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell" data-tab="inv" data-grp="d">
+                    <span class="op" style="font-size:1rem;">&minus;</span>
+                    <input type="number" class="mtx-cell" data-tab="inv" data-grp="b"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell" data-tab="inv" data-grp="c">
+                </span>
+            </span>
+            <span class="op">&times;</span>
+            <span class="matrix"><span class="br l"></span><span class="grid">
+                <input type="number" class="mtx-cell" data-tab="inv" data-grp="d">
+                <input type="number" class="mtx-cell" data-tab="inv" data-calc="nb">
+                <input type="number" class="mtx-cell" data-tab="inv" data-calc="nc">
+                <input type="number" class="mtx-cell" data-tab="inv" data-grp="a">
+            </span><span class="br r"></span></span>
+        </div>
+        <div class="mtx-row">
+            <span class="mtx-lead">det A =</span>
+            <input type="number" class="mtx-cell" data-tab="inv" data-calc="det">
+            <span class="hint" style="margin:0 0 0 8px;">(invers ada bila det A &ne; 0)</span>
+        </div>
+    </div>
+
+    <button class="kit-btn" onclick="clearAllMtx()">Clear</button>
+</div>
+
+@section Scripts {
+<script>
+    // ===== Compute helpers =====
+    function need(g, keys) {
+        const o = {};
+        for (const k of keys) { const x = g(k); if (x === null) return null; o[k] = x; }
+        return o;
+    }
+    const MTX_CALC = {
+        mul: {
+            c11: g => { const v = need(g, ['a11', 'b11', 'a12', 'b21']); return v ? v.a11 * v.b11 + v.a12 * v.b21 : null; },
+            c12: g => { const v = need(g, ['a11', 'b12', 'a12', 'b22']); return v ? v.a11 * v.b12 + v.a12 * v.b22 : null; },
+            c21: g => { const v = need(g, ['a21', 'b11', 'a22', 'b21']); return v ? v.a21 * v.b11 + v.a22 * v.b21 : null; },
+            c22: g => { const v = need(g, ['a21', 'b12', 'a22', 'b22']); return v ? v.a21 * v.b12 + v.a22 * v.b22 : null; }
+        },
+        det: {
+            p1: g => { const v = need(g, ['a', 'd']); return v ? v.a * v.d : null; },
+            p2: g => { const v = need(g, ['b', 'c']); return v ? v.b * v.c : null; },
+            res: g => { const v = need(g, ['a', 'b', 'c', 'd']); return v ? v.a * v.d - v.b * v.c : null; }
+        },
+        inv: {
+            det: g => { const v = need(g, ['a', 'b', 'c', 'd']); return v ? v.a * v.d - v.b * v.c : null; },
+            nb: g => { const v = need(g, ['b']); return v ? -v.b : null; },
+            nc: g => { const v = need(g, ['c']); return v ? -v.c : null; }
+        }
+    };
+
+    function groupVal(tab, key) {
+        const src = document.querySelector('[data-tab="' + tab + '"][data-src="' + key + '"]');
+        if (!src) return null;
+        const t = src.value.trim();
+        if (t === '') return null;
+        const n = parseFloat(t);
+        return isNaN(n) ? null : n;
+    }
+
+    function markCell(inp, expected) {
+        inp.classList.remove('correct', 'wrong');
+        if (inp.value.trim() === '') return;
+        if (expected === null || isNaN(expected)) return; // sumber belum lengkap
+        const v = parseFloat(inp.value);
+        if (isNaN(v)) { inp.classList.add('wrong'); return; }
+        const ok = Math.abs(v - expected) < 1e-9;
+        inp.classList.toggle('correct', ok);
+        inp.classList.toggle('wrong', !ok);
+    }
+
+    function validateTab(tab) {
+        const g = k => groupVal(tab, k);
+        document.querySelectorAll('[data-tab="' + tab + '"][data-grp]').forEach(inp => {
+            markCell(inp, g(inp.dataset.grp));
+        });
+        const calcs = MTX_CALC[tab] || {};
+        document.querySelectorAll('[data-tab="' + tab + '"][data-calc]').forEach(inp => {
+            const fn = calcs[inp.dataset.calc];
+            let exp = null;
+            if (fn) { try { exp = fn(g); } catch (e) { exp = null; } }
+            markCell(inp, exp);
+        });
+        const wrong = document.querySelector('[data-tab="' + tab + '"].mtx-cell.wrong');
+        document.getElementById('mtxWarning').style.display = wrong ? 'block' : 'none';
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.kit-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.kit-panel').forEach(p => p.classList.remove('active'));
+        const order = ['mul', 'trn', 'idn', 'det', 'inv'];
+        document.querySelectorAll('.kit-tab')[order.indexOf(tab)].classList.add('active');
+        document.getElementById('panel-' + tab).classList.add('active');
+        validateTab(tab); // refresh warning for the newly shown tab
+    }
+
+    function clearAllMtx() {
+        document.querySelectorAll('.mtx-cell').forEach(c => {
+            c.value = ''; c.classList.remove('correct', 'wrong');
+        });
+        document.getElementById('mtxWarning').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.mtx-cell').forEach(inp => {
+            inp.addEventListener('input', () => validateTab(inp.dataset.tab));
+        });
+        const hash = (location.hash || '').replace('#', '');
+        if (['mul', 'trn', 'idn', 'det', 'inv'].includes(hash)) switchTab(hash);
+    });
+</script>
+}

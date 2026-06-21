@@ -1,0 +1,402 @@
+@{
+    ViewData["Title"] = "Trigonometri 1";
+}
+
+<style>
+    .kit-container { padding: 30px 35px; max-width: 980px; }
+    .kit-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: #2c5f7c; }
+    .kit-title-bar { border: none; border-top: 3px solid #e67e22; width: 60px; margin: 0 0 22px 0; }
+
+    /* Sticky warning */
+    .trig-warning {
+        position: sticky; top: 70px; z-index: 50;
+        color: #b02a37; font-weight: 600; font-size: 0.9rem;
+        padding: 10px 16px; background: #fff3f3; border: 1px solid #f5c6cb;
+        border-radius: 8px; margin-bottom: 18px; display: none;
+    }
+    .trig-warning i { margin-right: 6px; }
+
+    /* Reference card */
+    .ref-card {
+        display: flex; flex-wrap: wrap; gap: 30px; align-items: center;
+        background: #f3f7f9; border: 1px solid #d7e3ea; border-radius: 12px;
+        padding: 20px 26px; margin-bottom: 26px;
+    }
+    .ref-card h5 { color: #2c5f7c; font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; }
+    .ratio-grid { display: grid; grid-template-columns: auto auto; gap: 6px 34px; font-size: 1rem; }
+    .ratio-grid .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; }
+    .ratio-grid .frac .num { border-bottom: 1.5px solid #444; padding: 0 4px; line-height: 1.1; }
+    .ratio-grid .frac .den { padding: 0 4px; line-height: 1.1; }
+    .trig-fn { font-style: italic; color: #2c5f7c; font-weight: 600; }
+
+    /* Angle cards */
+    .trig-card {
+        border: 2px solid #cdd9e1; border-radius: 12px; padding: 22px 26px;
+        margin-bottom: 22px; background: #fff; transition: border-color .3s, box-shadow .3s;
+    }
+    .trig-card.done { border-color: #2ecc71; box-shadow: 0 2px 12px rgba(46,204,113,0.15); }
+    .trig-card-head {
+        display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    }
+    .trig-card-head .num-badge {
+        width: 30px; height: 30px; border-radius: 50%; background: #2c5f7c; color: #fff;
+        display: inline-flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;
+    }
+    .trig-card-head h4 { font-size: 1.1rem; font-weight: 700; color: #2c5f7c; margin: 0; }
+    .card-check {
+        margin-left: auto; color: #2ecc71; font-weight: 700; font-size: 0.9rem;
+        opacity: 0; transition: opacity .3s;
+    }
+    .card-check.show { opacity: 1; }
+
+    .trig-body { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start; }
+    .trig-figure { flex-shrink: 0; }
+    .trig-figure .cap { text-align: center; font-size: 0.78rem; color: #888; margin-top: 4px; font-style: italic; }
+    .trig-steps { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 10px; }
+    .step-line {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+        font-size: 1rem; color: #333;
+    }
+    .step-line .lead { color: #555; }
+    .step-line .given { color: #1e7e44; font-weight: 600; }
+    .muted-note { font-size: 0.85rem; color: #6b8a99; font-style: italic; }
+
+    /* Blanks */
+    .trig-blank {
+        width: 50px; height: 30px; text-align: center;
+        border: 2px solid #d0dce4; border-radius: 6px; background: #f8fafb;
+        font-size: 0.92rem; font-weight: 600; color: #2c5f7c;
+        transition: border-color .25s, background .25s, box-shadow .25s;
+    }
+    .trig-blank.wide { width: 120px; }
+    .trig-blank:focus { outline: none; border-color: #e67e22; background: #fff; box-shadow: 0 0 7px rgba(230,126,34,0.25); }
+    .trig-blank.correct { border-color: #2ecc71 !important; background: #eafaf1 !important; }
+    .trig-blank.wrong { border-color: #e74c3c !important; background: #fdf2f2 !important; }
+
+    .sqrt-sym { font-size: 1.25rem; color: #2c5f7c; }
+    .sup2 { font-size: 0.7em; vertical-align: super; }
+    .frac-inline { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; }
+    .frac-inline .top { border-bottom: 1.5px solid #555; padding: 0 2px 1px; }
+    .frac-inline .bot { padding: 1px 2px 0; }
+    .trig-blank.sm { width: 44px; height: 27px; font-size: 0.85rem; }
+    .frac-inline .trig-blank.sm { margin: 1px 0; }
+    .root-wrap { display: inline-flex; align-items: center; gap: 1px; }
+    .eqsep { margin: 0 5px; color: #555; }
+    .result-fixed { font-weight: 600; color: #1e7e44; }
+
+    .kit-btn {
+        padding: 9px 26px; border: none; border-radius: 8px; cursor: pointer;
+        font-weight: 600; font-size: 0.9rem; color: #c0392b;
+        background: #fff; border: 1px solid #e3a9a1; transition: background .2s;
+    }
+    .kit-btn:hover { background: #fdf2f2; }
+</style>
+
+<div class="kit-container">
+    <div class="kit-title">Trigonometri 1 &mdash; Perbandingan Trigonometri Sudut Istimewa</div>
+    <hr class="kit-title-bar">
+
+    <div class="trig-warning" id="trigWarning">
+        <i class="fas fa-triangle-exclamation"></i> Periksa kembali &mdash; masih ada isian yang belum sesuai kaidah trigonometri.
+    </div>
+
+    <!-- ===== Reference card ===== -->
+    <div class="ref-card">
+        <svg width="200" height="150" viewBox="0 0 200 150">
+            <polygon points="20,130 185,130 185,30" fill="#eaf1f5" stroke="#2c5f7c" stroke-width="2"/>
+            <rect x="170" y="115" width="15" height="15" fill="none" stroke="#2c5f7c" stroke-width="1.5"/>
+            <path d="M 50 130 A 30 30 0 0 0 38 112" fill="none" stroke="#e67e22" stroke-width="2"/>
+            <text x="40" y="124" font-size="13" fill="#e67e22" font-style="italic">&#945;</text>
+            <text x="95" y="92" font-size="13" fill="#2c5f7c" font-style="italic">mi</text>
+            <text x="190" y="85" font-size="13" fill="#2c5f7c" font-style="italic">de</text>
+            <text x="95" y="145" font-size="13" fill="#2c5f7c" font-style="italic">sa</text>
+        </svg>
+        <div>
+            <h5>Perbandingan Trigonometri pada Segitiga Siku-siku</h5>
+            <div class="ratio-grid">
+                <div><span class="trig-fn">sin &#945;</span> = <span class="frac"><span class="num">de</span><span class="den">mi</span></span></div>
+                <div><span class="trig-fn">cosec &#945;</span> = <span class="frac"><span class="num">mi</span><span class="den">de</span></span></div>
+                <div><span class="trig-fn">cos &#945;</span> = <span class="frac"><span class="num">sa</span><span class="den">mi</span></span></div>
+                <div><span class="trig-fn">sec &#945;</span> = <span class="frac"><span class="num">mi</span><span class="den">sa</span></span></div>
+                <div><span class="trig-fn">tan &#945;</span> = <span class="frac"><span class="num">de</span><span class="den">sa</span></span></div>
+                <div><span class="trig-fn">cotan &#945;</span> = <span class="frac"><span class="num">sa</span><span class="den">de</span></span></div>
+            </div>
+            <div class="muted-note" style="margin-top:8px;">de = depan &nbsp;&bull;&nbsp; sa = samping &nbsp;&bull;&nbsp; mi = miring</div>
+        </div>
+    </div>
+
+    <!-- ===== 1. SUDUT 45 ===== -->
+    <div class="trig-card" data-card>
+        <div class="trig-card-head">
+            <span class="num-badge">1</span><h4>Sudut 45&deg;</h4>
+            <span class="card-check"><i class="fas fa-circle-check"></i> Benar</span>
+        </div>
+        <div class="trig-body">
+            <div class="trig-figure">
+                <svg width="200" height="170" viewBox="0 0 200 170">
+                    <polygon points="20,140 170,140 170,25" fill="#eaf1f5" stroke="#2c5f7c" stroke-width="2"/>
+                    <rect x="155" y="125" width="15" height="15" fill="none" stroke="#2c5f7c" stroke-width="1.5"/>
+                    <path d="M 55 140 A 35 35 0 0 0 44 118" fill="none" stroke="#e67e22" stroke-width="2"/>
+                    <text x="40" y="134" font-size="12" fill="#e67e22">45&deg;</text>
+                    <text x="8" y="152" font-size="14" font-weight="bold">A</text>
+                    <text x="168" y="158" font-size="14" font-weight="bold">B</text>
+                    <text x="168" y="20" font-size="14" font-weight="bold">C</text>
+                    <text x="178" y="88" font-size="13" fill="#333">1</text>
+                </svg>
+                <div class="cap">siku-siku di B</div>
+            </div>
+            <div class="trig-steps">
+                <div class="step-line"><span class="lead">Segitiga ABC siku-siku di B,</span> <span class="given">de = BC = 1</span></div>
+                <div class="step-line">sa = AB = <input class="trig-blank" data-ans='["1"]'></div>
+                <div class="step-line">
+                    mi = AC = <span class="sqrt-sym">&#8730;(</span>
+                    <input class="trig-blank" data-ans='["1"]'><span class="sup2">2</span> +
+                    <input class="trig-blank" data-ans='["1"]'><span class="sup2">2</span><span class="sqrt-sym">)</span>
+                    = <span class="sqrt-sym">&#8730;</span><input class="trig-blank" data-ans='["2"]'>
+                </div>
+                <div class="step-line">sin 45&deg; =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["2"]'></span></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["2"]'></span>
+                </div>
+                <div class="step-line">cos 45&deg; =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["2"]'></span></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["2"]'></span>
+                </div>
+                <div class="step-line">tan 45&deg; =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["1"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <input class="trig-blank sm" data-ans='["1"]'>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 2. SUDUT 60 ===== -->
+    <div class="trig-card" data-card>
+        <div class="trig-card-head">
+            <span class="num-badge">2</span><h4>Sudut 60&deg;</h4>
+            <span class="card-check"><i class="fas fa-circle-check"></i> Benar</span>
+        </div>
+        <div class="trig-body">
+            <div class="trig-figure">
+                <svg width="240" height="180" viewBox="0 0 240 180">
+                    <!-- triangle ABC -->
+                    <polygon points="30,150 150,150 150,35" fill="#eaf1f5" stroke="#2c5f7c" stroke-width="2"/>
+                    <!-- reflection to D (equilateral construction) -->
+                    <line x1="150" y1="150" x2="270" y2="150" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4"/>
+                    <line x1="150" y1="35" x2="270" y2="150" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4"/>
+                    <rect x="135" y="135" width="15" height="15" fill="none" stroke="#2c5f7c" stroke-width="1.5"/>
+                    <path d="M 65 150 A 35 35 0 0 0 56 126" fill="none" stroke="#e67e22" stroke-width="2"/>
+                    <text x="50" y="144" font-size="12" fill="#e67e22">60&deg;</text>
+                    <text x="18" y="163" font-size="14" font-weight="bold">A</text>
+                    <text x="146" y="168" font-size="14" font-weight="bold">B</text>
+                    <text x="150" y="28" font-size="14" font-weight="bold">C</text>
+                    <text x="232" y="163" font-size="14" font-weight="bold" fill="#777">D</text>
+                    <text x="86" y="166" font-size="12" fill="#333">1</text>
+                    <text x="200" y="166" font-size="12" fill="#777">1</text>
+                </svg>
+                <div class="cap">cermin A &rarr; D, segitiga ACD sama sisi</div>
+            </div>
+            <div class="trig-steps">
+                <div class="step-line"><span class="lead">Segitiga ABC siku-siku di B, &ang;A = 60&deg;,</span> <span class="given">sa = AB = 1</span></div>
+                <div class="step-line">AD = <input class="trig-blank" data-ans='["2"]'></div>
+                <div class="step-line">&ang;ACB = <input class="trig-blank" data-ans='["30"]'> &deg; &nbsp;&nbsp; &ang;ACD = <input class="trig-blank" data-ans='["60"]'> &deg;</div>
+                <div class="step-line">segitiga ACD = segitiga <input class="trig-blank wide" data-ans='["sama sisi","samasisi","equilateral"]'></div>
+                <div class="step-line">maka mi = AC = <input class="trig-blank" data-ans='["2"]'></div>
+                <div class="step-line">
+                    de = CB = <span class="sqrt-sym">&#8730;(</span>
+                    <input class="trig-blank" data-ans='["2"]'><span class="sup2">2</span> &minus;
+                    <input class="trig-blank" data-ans='["1"]'><span class="sup2">2</span><span class="sqrt-sym">)</span>
+                    = <span class="sqrt-sym">&#8730;</span><input class="trig-blank" data-ans='["3"]'>
+                </div>
+                <div class="step-line">sin 60&deg; = de/mi =
+                    <span class="frac-inline"><span class="top"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span>
+                </div>
+                <div class="step-line">cos 60&deg; = sa/mi =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                </div>
+                <div class="step-line">tan 60&deg; = de/sa =
+                    <span class="frac-inline"><span class="top"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span></span><span class="bot"><input class="trig-blank sm" data-ans='["1"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 3. SUDUT 30 ===== -->
+    <div class="trig-card" data-card>
+        <div class="trig-card-head">
+            <span class="num-badge">3</span><h4>Sudut 30&deg;</h4>
+            <span class="card-check"><i class="fas fa-circle-check"></i> Benar</span>
+        </div>
+        <div class="trig-body">
+            <div class="trig-figure">
+                <svg width="240" height="170" viewBox="0 0 240 170">
+                    <polygon points="20,140 200,140 200,75" fill="#eaf1f5" stroke="#2c5f7c" stroke-width="2"/>
+                    <rect x="185" y="125" width="15" height="15" fill="none" stroke="#2c5f7c" stroke-width="1.5"/>
+                    <path d="M 60 140 A 40 40 0 0 0 54 126" fill="none" stroke="#e67e22" stroke-width="2"/>
+                    <text x="42" y="135" font-size="12" fill="#e67e22">30&deg;</text>
+                    <text x="8" y="152" font-size="14" font-weight="bold">A</text>
+                    <text x="198" y="158" font-size="14" font-weight="bold">B</text>
+                    <text x="198" y="70" font-size="14" font-weight="bold">C</text>
+                    <text x="208" y="112" font-size="12" fill="#333">1</text>
+                </svg>
+                <div class="cap">siku-siku di B</div>
+            </div>
+            <div class="trig-steps">
+                <div class="step-line"><span class="lead">Segitiga ABC siku-siku di B, &ang;A = 30&deg;,</span> <span class="given">de = BC = 1</span></div>
+                <div class="step-line">mi = AC = <input class="trig-blank" data-ans='["2"]'></div>
+                <div class="step-line">
+                    sa = AB = <span class="sqrt-sym">&#8730;(</span>
+                    <input class="trig-blank" data-ans='["2"]'><span class="sup2">2</span> &minus;
+                    <input class="trig-blank" data-ans='["1"]'><span class="sup2">2</span><span class="sqrt-sym">)</span>
+                    = <span class="sqrt-sym">&#8730;</span><input class="trig-blank" data-ans='["3"]'>
+                </div>
+                <div class="step-line">sin 30&deg; = de/mi =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                </div>
+                <div class="step-line">cos 30&deg; = sa/mi =
+                    <span class="frac-inline"><span class="top"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["2"]'></span></span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span>
+                </div>
+                <div class="step-line">tan 30&deg; = de/sa =
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span></span></span>
+                    <span class="eqsep">=</span>
+                    <span class="frac-inline"><span class="top"><input class="trig-blank sm" data-ans='["1"]'></span><span class="bot"><input class="trig-blank sm" data-ans='["3"]'></span></span>
+                    <span class="root-wrap"><span class="sqrt-sym">&#8730;</span><input class="trig-blank sm" data-ans='["3"]'></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 4. SUDUT 0 ===== -->
+    <div class="trig-card" data-card>
+        <div class="trig-card-head">
+            <span class="num-badge">4</span><h4>Sudut 0&deg;</h4>
+            <span class="card-check"><i class="fas fa-circle-check"></i> Benar</span>
+        </div>
+        <div class="trig-body">
+            <div class="trig-figure">
+                <svg width="220" height="150" viewBox="0 0 220 150">
+                    <line x1="30" y1="110" x2="30" y2="40" stroke="#bbb" stroke-width="1.5" stroke-dasharray="4,4"/>
+                    <line x1="30" y1="110" x2="190" y2="110" stroke="#2c5f7c" stroke-width="3"/>
+                    <text x="22" y="128" font-size="14" font-weight="bold">A</text>
+                    <text x="180" y="128" font-size="13" font-weight="bold">B=C</text>
+                    <text x="120" y="103" font-size="12" fill="#e67e22">&#945; = 0&deg;</text>
+                </svg>
+                <div class="cap">titik B berimpit dengan C</div>
+            </div>
+            <div class="trig-steps">
+                <div class="step-line"><span class="lead">Saat &#945; = 0&deg;, titik B berimpit C</span></div>
+                <div class="step-line">depan = BC = <input class="trig-blank" data-ans='["0"]'></div>
+                <div class="step-line"><span class="muted-note">samping = AB, &nbsp; miring = AC</span></div>
+                <div class="step-line">samping = miring (karena <input class="trig-blank" data-ans='["b","ab"]'> = <input class="trig-blank" data-ans='["c","ac"]'> )</div>
+                <div class="step-line">sin 0&deg; = depan / miring = <input class="trig-blank" data-ans='["0"]'></div>
+                <div class="step-line">cos 0&deg; = samping / miring = <input class="trig-blank" data-ans='["1"]'></div>
+                <div class="step-line">tan 0&deg; = depan / samping = <input class="trig-blank" data-ans='["0"]'></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 5. SUDUT 90 ===== -->
+    <div class="trig-card" data-card>
+        <div class="trig-card-head">
+            <span class="num-badge">5</span><h4>Sudut 90&deg;</h4>
+            <span class="card-check"><i class="fas fa-circle-check"></i> Benar</span>
+        </div>
+        <div class="trig-body">
+            <div class="trig-figure">
+                <svg width="220" height="160" viewBox="0 0 220 160">
+                    <line x1="60" y1="30" x2="60" y2="125" stroke="#2c5f7c" stroke-width="3"/>
+                    <line x1="60" y1="125" x2="150" y2="125" stroke="#bbb" stroke-width="1.5" stroke-dasharray="4,4"/>
+                    <text x="52" y="24" font-size="14" font-weight="bold">A</text>
+                    <text x="18" y="130" font-size="13" font-weight="bold">B=C</text>
+                    <text x="68" y="60" font-size="12" fill="#e67e22">&#945; = 90&deg;</text>
+                </svg>
+                <div class="cap">titik B berimpit dengan C</div>
+            </div>
+            <div class="trig-steps">
+                <div class="step-line"><span class="lead">Saat &#945; = 90&deg;, titik B berimpit C</span></div>
+                <div class="step-line">samping = BC = <input class="trig-blank" data-ans='["0"]'></div>
+                <div class="step-line"><span class="muted-note">depan = AB, &nbsp; miring = AC</span></div>
+                <div class="step-line">depan = miring (karena <input class="trig-blank" data-ans='["b","ab"]'> = <input class="trig-blank" data-ans='["c","ac"]'> )</div>
+                <div class="step-line">sin 90&deg; = depan / miring = <input class="trig-blank" data-ans='["1"]'></div>
+                <div class="step-line">cos 90&deg; = samping / miring = <input class="trig-blank" data-ans='["0"]'></div>
+                <div class="step-line">tan 90&deg; = depan / samping =
+                    <span class="frac-inline"><span class="top">depan</span><span class="bot"><input class="trig-blank sm" data-ans='["0"]'></span></span>
+                    <span class="eqsep">&rarr;</span> <span class="result-fixed">tak terdefinisi</span>
+                </div>
+                <div class="muted-note">(pembagian dengan nol)</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="kit-btn" onclick="clearAll()">Clear</button>
+</div>
+
+@section Scripts {
+<script>
+    function normTrig(s) {
+        let t = (s || '').toString().toLowerCase().replace(/\s+/g, '');
+        t = t.replace(/sqrt|akar/g, '√');
+        t = t.replace(/[()]/g, '');
+        t = t.replace(/derajat|deg|°/g, '');
+        t = t.replace(/[*·×]/g, '');
+        t = t.replace(/,/g, '.');
+        t = t.replace(/0\.5/g, '½').replace(/1\/2/g, '½');
+        t = t.replace(/1\/3/g, '⅓');
+        t = t.replace(/tidak/g, 'tak');
+        return t;
+    }
+
+    function validateBlank(input) {
+        const raw = input.value.trim();
+        if (raw === '') { input.classList.remove('correct', 'wrong'); refresh(); return; }
+        let answers;
+        try { answers = JSON.parse(input.dataset.ans); } catch (e) { answers = []; }
+        const accepted = answers.map(normTrig);
+        const ok = accepted.includes(normTrig(raw));
+        input.classList.toggle('correct', ok);
+        input.classList.toggle('wrong', !ok);
+        refresh();
+    }
+
+    function refresh() {
+        const anyWrong = document.querySelector('.trig-blank.wrong');
+        document.getElementById('trigWarning').style.display = anyWrong ? 'block' : 'none';
+        document.querySelectorAll('[data-card]').forEach(card => {
+            const blanks = [...card.querySelectorAll('.trig-blank')];
+            const allOk = blanks.length > 0 && blanks.every(b => b.classList.contains('correct'));
+            card.querySelector('.card-check').classList.toggle('show', allOk);
+            card.classList.toggle('done', allOk);
+        });
+    }
+
+    function clearAll() {
+        document.querySelectorAll('.trig-blank').forEach(b => {
+            b.value = ''; b.classList.remove('correct', 'wrong');
+        });
+        refresh();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.trig-blank').forEach(b => {
+            b.addEventListener('input', () => validateBlank(b));
+        });
+    });
+</script>
+}
