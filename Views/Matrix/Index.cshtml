@@ -61,6 +61,22 @@
     .mtx-cell.correct { border-color: #2ecc71 !important; background: #eafaf1 !important; }
     .mtx-cell.wrong { border-color: #e74c3c !important; background: #fdf2f2 !important; }
     .mtx-cell.src { border-style: dashed; }
+    .mtx-cell.c-pink { background: #f6cbd2; border-color: #d9959f; color: #593139; }
+    .mtx-cell.c-yellow { background: #fff241; border-color: #d9c900; color: #403c00; }
+    .mtx-cell.c-purple { background: #b8b2d9; border-color: #8880b8; color: #302b55; }
+    .mtx-cell.c-green { background: #c9dca0; border-color: #98b25f; color: #33451f; }
+    .mtx-cell.c-red { background: #e51616; border-color: #b71212; color: #fff; }
+    .mtx-cell.c-gray { background: #d9dedc; border-color: #a9b0ad; color: #2f3633; }
+    .mtx-cell.c-tan { background: #d8c2a0; border-color: #ad9270; color: #493725; }
+    .mtx-cell.c-orange { background: #f19a38; border-color: #c77723; color: #3f250b; }
+    .mtx-cell.c-pink:focus { background: #fbe0e4; }
+    .mtx-cell.c-yellow:focus { background: #fff8a3; }
+    .mtx-cell.c-purple:focus { background: #d9d4ee; }
+    .mtx-cell.c-green:focus { background: #dceabb; }
+    .mtx-cell.c-red:focus { background: #f04b4b; }
+    .mtx-cell.c-gray:focus { background: #edf0ef; }
+    .mtx-cell.c-tan:focus { background: #ead7ba; }
+    .mtx-cell.c-orange:focus { background: #f7bd77; }
 
     .expand-term { display: inline-flex; align-items: center; gap: 3px; font-size: 0.9rem; white-space: nowrap; }
     .expand-term .mtx-cell { width: 38px; height: 30px; font-size: 0.85rem; }
@@ -103,28 +119,28 @@
         <div class="mtx-row">
             <span class="mtx-lead">A =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a11">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a12">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a21">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="a22">
+                <input type="number" class="mtx-cell src c-pink" data-tab="mul" data-src="a11">
+                <input type="number" class="mtx-cell src c-yellow" data-tab="mul" data-src="a12">
+                <input type="number" class="mtx-cell src c-purple" data-tab="mul" data-src="a21">
+                <input type="number" class="mtx-cell src c-green" data-tab="mul" data-src="a22">
             </span><span class="br r"></span></span>
             <span class="op">&times;</span>
             <span class="mtx-lead">B =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b11">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b12">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b21">
-                <input type="number" class="mtx-cell src" data-tab="mul" data-src="b22">
+                <input type="number" class="mtx-cell src c-red" data-tab="mul" data-src="b11">
+                <input type="number" class="mtx-cell src c-gray" data-tab="mul" data-src="b12">
+                <input type="number" class="mtx-cell src c-tan" data-tab="mul" data-src="b21">
+                <input type="number" class="mtx-cell src c-orange" data-tab="mul" data-src="b22">
             </span><span class="br r"></span></span>
         </div>
 
         <div class="mtx-row">
             <span class="op">=</span>
             <span class="matrix"><span class="br l"></span><span class="grid expand">
-                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b21">)</span>
-                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b22">)</span>
-                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b21">)</span>
-                <span class="expand-term">(<input type="number" class="mtx-cell" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell" data-tab="mul" data-grp="b22">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell c-pink" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell c-red" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell c-yellow" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell c-tan" data-tab="mul" data-grp="b21">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell c-pink" data-tab="mul" data-grp="a11">&times;<input type="number" class="mtx-cell c-gray" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell c-yellow" data-tab="mul" data-grp="a12">&times;<input type="number" class="mtx-cell c-orange" data-tab="mul" data-grp="b22">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell c-purple" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell c-red" data-tab="mul" data-grp="b11">) + (<input type="number" class="mtx-cell c-green" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell c-tan" data-tab="mul" data-grp="b21">)</span>
+                <span class="expand-term">(<input type="number" class="mtx-cell c-purple" data-tab="mul" data-grp="a21">&times;<input type="number" class="mtx-cell c-gray" data-tab="mul" data-grp="b12">) + (<input type="number" class="mtx-cell c-green" data-tab="mul" data-grp="a22">&times;<input type="number" class="mtx-cell c-orange" data-tab="mul" data-grp="b22">)</span>
             </span><span class="br r"></span></span>
         </div>
 
@@ -146,18 +162,18 @@
         <div class="mtx-row">
             <span class="mtx-lead">A =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="trn" data-src="a">
-                <input type="number" class="mtx-cell src" data-tab="trn" data-src="b">
-                <input type="number" class="mtx-cell src" data-tab="trn" data-src="c">
-                <input type="number" class="mtx-cell src" data-tab="trn" data-src="d">
+                <input type="number" class="mtx-cell src c-pink" data-tab="trn" data-src="a">
+                <input type="number" class="mtx-cell src c-yellow" data-tab="trn" data-src="b">
+                <input type="number" class="mtx-cell src c-purple" data-tab="trn" data-src="c">
+                <input type="number" class="mtx-cell src c-green" data-tab="trn" data-src="d">
             </span><span class="br r"></span></span>
             <span style="width:30px;"></span>
             <span class="mtx-lead">A<span class="sup-t">T</span> =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell" data-tab="trn" data-grp="a">
-                <input type="number" class="mtx-cell" data-tab="trn" data-grp="c">
-                <input type="number" class="mtx-cell" data-tab="trn" data-grp="b">
-                <input type="number" class="mtx-cell" data-tab="trn" data-grp="d">
+                <input type="number" class="mtx-cell c-pink" data-tab="trn" data-grp="a">
+                <input type="number" class="mtx-cell c-purple" data-tab="trn" data-grp="c">
+                <input type="number" class="mtx-cell c-yellow" data-tab="trn" data-grp="b">
+                <input type="number" class="mtx-cell c-green" data-tab="trn" data-grp="d">
             </span><span class="br r"></span></span>
         </div>
     </div>
@@ -179,26 +195,26 @@
             </span><span class="br r"></span></span>
             <span class="op">&times;</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="idn" data-src="a">
-                <input type="number" class="mtx-cell src" data-tab="idn" data-src="b">
-                <input type="number" class="mtx-cell src" data-tab="idn" data-src="c">
-                <input type="number" class="mtx-cell src" data-tab="idn" data-src="d">
+                <input type="number" class="mtx-cell src c-red" data-tab="idn" data-src="a">
+                <input type="number" class="mtx-cell src c-gray" data-tab="idn" data-src="b">
+                <input type="number" class="mtx-cell src c-tan" data-tab="idn" data-src="c">
+                <input type="number" class="mtx-cell src c-orange" data-tab="idn" data-src="d">
             </span><span class="br r"></span></span>
             <span class="op">=</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+                <input type="number" class="mtx-cell c-red" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell c-gray" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell c-tan" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell c-orange" data-tab="idn" data-grp="d">
             </span><span class="br r"></span></span>
         </div>
 
         <div class="mtx-row">
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+                <input type="number" class="mtx-cell c-red" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell c-gray" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell c-tan" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell c-orange" data-tab="idn" data-grp="d">
             </span><span class="br r"></span></span>
             <span class="op">&times;</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
@@ -207,10 +223,10 @@
             </span><span class="br r"></span></span>
             <span class="op">=</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="a">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="b">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="c">
-                <input type="number" class="mtx-cell" data-tab="idn" data-grp="d">
+                <input type="number" class="mtx-cell c-red" data-tab="idn" data-grp="a">
+                <input type="number" class="mtx-cell c-gray" data-tab="idn" data-grp="b">
+                <input type="number" class="mtx-cell c-tan" data-tab="idn" data-grp="c">
+                <input type="number" class="mtx-cell c-orange" data-tab="idn" data-grp="d">
             </span><span class="br r"></span></span>
         </div>
     </div>
@@ -222,21 +238,21 @@
         <div class="mtx-row">
             <span class="mtx-lead">A =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="det" data-src="a">
-                <input type="number" class="mtx-cell src" data-tab="det" data-src="b">
-                <input type="number" class="mtx-cell src" data-tab="det" data-src="c">
-                <input type="number" class="mtx-cell src" data-tab="det" data-src="d">
+                <input type="number" class="mtx-cell src c-pink" data-tab="det" data-src="a">
+                <input type="number" class="mtx-cell src c-yellow" data-tab="det" data-src="b">
+                <input type="number" class="mtx-cell src c-purple" data-tab="det" data-src="c">
+                <input type="number" class="mtx-cell src c-green" data-tab="det" data-src="d">
             </span><span class="br r"></span></span>
         </div>
         <div class="mtx-row">
             <span class="mtx-lead">maka det A =</span>
-            <input type="number" class="mtx-cell" data-tab="det" data-grp="a">
+            <input type="number" class="mtx-cell c-pink" data-tab="det" data-grp="a">
             <span class="op">&times;</span>
-            <input type="number" class="mtx-cell" data-tab="det" data-grp="d">
+            <input type="number" class="mtx-cell c-green" data-tab="det" data-grp="d">
             <span class="op">&minus;</span>
-            <input type="number" class="mtx-cell" data-tab="det" data-grp="b">
+            <input type="number" class="mtx-cell c-yellow" data-tab="det" data-grp="b">
             <span class="op">&times;</span>
-            <input type="number" class="mtx-cell" data-tab="det" data-grp="c">
+            <input type="number" class="mtx-cell c-purple" data-tab="det" data-grp="c">
         </div>
         <div class="mtx-row">
             <span class="op">=</span>
@@ -257,10 +273,10 @@
         <div class="mtx-row">
             <span class="mtx-lead">A =</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell src" data-tab="inv" data-src="a">
-                <input type="number" class="mtx-cell src" data-tab="inv" data-src="b">
-                <input type="number" class="mtx-cell src" data-tab="inv" data-src="c">
-                <input type="number" class="mtx-cell src" data-tab="inv" data-src="d">
+                <input type="number" class="mtx-cell src c-pink" data-tab="inv" data-src="a">
+                <input type="number" class="mtx-cell src c-yellow" data-tab="inv" data-src="b">
+                <input type="number" class="mtx-cell src c-purple" data-tab="inv" data-src="c">
+                <input type="number" class="mtx-cell src c-green" data-tab="inv" data-src="d">
             </span><span class="br r"></span></span>
         </div>
         <div class="mtx-row">
@@ -268,17 +284,17 @@
             <span class="frac-coef">
                 <span class="top">1</span>
                 <span class="bot">
-                    <input type="number" class="mtx-cell" data-tab="inv" data-grp="a"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell" data-tab="inv" data-grp="d">
+                    <input type="number" class="mtx-cell c-pink" data-tab="inv" data-grp="a"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell c-green" data-tab="inv" data-grp="d">
                     <span class="op" style="font-size:1rem;">&minus;</span>
-                    <input type="number" class="mtx-cell" data-tab="inv" data-grp="b"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell" data-tab="inv" data-grp="c">
+                    <input type="number" class="mtx-cell c-yellow" data-tab="inv" data-grp="b"><span class="op" style="font-size:1rem;">&times;</span><input type="number" class="mtx-cell c-purple" data-tab="inv" data-grp="c">
                 </span>
             </span>
             <span class="op">&times;</span>
             <span class="matrix"><span class="br l"></span><span class="grid">
-                <input type="number" class="mtx-cell" data-tab="inv" data-grp="d">
-                <input type="number" class="mtx-cell" data-tab="inv" data-calc="nb">
-                <input type="number" class="mtx-cell" data-tab="inv" data-calc="nc">
-                <input type="number" class="mtx-cell" data-tab="inv" data-grp="a">
+                <input type="number" class="mtx-cell c-green" data-tab="inv" data-grp="d">
+                <input type="number" class="mtx-cell c-yellow" data-tab="inv" data-calc="nb">
+                <input type="number" class="mtx-cell c-purple" data-tab="inv" data-calc="nc">
+                <input type="number" class="mtx-cell c-pink" data-tab="inv" data-grp="a">
             </span><span class="br r"></span></span>
         </div>
         <div class="mtx-row">
