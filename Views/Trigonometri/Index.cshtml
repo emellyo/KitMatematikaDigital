@@ -244,7 +244,7 @@
                 </div>
 
                 <div class="sym-row">
-                    <button class="sym-btn" type="button" onclick="insertSym('−')" title="minus">&minus;</button>
+                    <button class="sym-btn" type="button" onclick="insertSym('-')" title="minus">&minus;</button>
                     <button class="sym-btn" type="button" onclick="insertSym('√')" title="akar">&#8730;</button>
                     <button class="sym-btn" type="button" onclick="insertSym('/')" title="pembagian">/</button>
                     <span class="sym-hint">klik sel dulu, lalu tekan simbol &bull; <b>td</b> = tak terdefinisi</span>
@@ -277,6 +277,7 @@
     function toNum(raw) {
         let t = (raw || '').toString().trim().toLowerCase().replace(/\s+/g, '');
         if (t === '') return null;
+        t = t.replace(/[−–—]/g, '-');
         if (/^(td|tak|takterdefinisi|takterdefinisikan|tidakterdefinisi|undefined|∞|-∞)$/.test(t)) return 'TD';
         t = t.replace(/,/g, '.');
         t = t.replace(/akar|sqrt/g, '√');
