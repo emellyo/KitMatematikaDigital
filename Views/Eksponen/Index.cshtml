@@ -91,6 +91,10 @@
     .pangkat-input.correct { border-color: #2ecc71 !important; background: #eafaf1 !important; }
     .pangkat-input.wrong { border-color: #e74c3c !important; background: #fdf2f2 !important; }
 
+    /* Persamaan jawaban: a^( [pangkat] [tanda] [pangkat] ) */
+    .answer-exp { display: inline-flex; align-items: center; gap: 6px; position: relative; top: -14px; }
+    .op-input { width: 36px !important; color: #e67e22; }
+
     /* Expansion boxes */
     .expand-box {
         display: inline-flex; flex-wrap: wrap; align-items: center; gap: 5px;
@@ -102,6 +106,7 @@
         font-size: 1.4rem; color: #2c5f7c;
     }
     .a-term.pop { animation: pop .3s ease; }
+    .a-term.one { font-style: normal; }   /* angka "1" pemula pada pembagian */
     .dot { color: #999; font-weight: bold; }
     .exp-empty { color: #bbb; font-style: italic; font-size: 0.85rem; }
 
@@ -208,12 +213,17 @@
             <div class="exp-feedback info" id="kali-fb-hasil"></div>
         </div>
 
-        <!-- Step 4: jawaban pangkat -->
+        <!-- Step 4: jawaban pangkat (persamaan m + n) -->
         <div class="exp-step is-hidden" id="kali-jawab-sec">
-            <div class="exp-step-label"><span class="exp-step-num">4</span> Tuliskan dalam bentuk pangkat</div>
+            <div class="exp-step-label"><span class="exp-step-num">4</span> Tuliskan sebagai satu pangkat: isi pangkat, tanda, pangkat</div>
             <div class="exp-eq">
                 <span class="op">=</span>
-                <span class="base">a<span class="sup"><input type="number" class="pangkat-input" id="kali-jawab" style="width:48px;"></span></span>
+                <span class="base" style="font-size:2rem;">a</span>
+                <span class="answer-exp">
+                    <input type="number" class="pangkat-input" id="kali-jawab-a">
+                    <input type="text" class="pangkat-input op-input" id="kali-jawab-op" maxlength="1">
+                    <input type="number" class="pangkat-input" id="kali-jawab-b">
+                </span>
             </div>
             <div class="exp-feedback" id="kali-fb-jawab"></div>
         </div>
@@ -239,7 +249,7 @@
                     <span class="base">a<span class="sup"><input type="number" min="1" max="9" class="pangkat-input" id="bagi-m"></span></span>
                 </div>
             </div>
-            <div class="exp-feedback info" id="bagi-fb-soal">Catatan: pangkat pembilang (atas) harus lebih besar dari penyebut (bawah).</div>
+            <div class="exp-feedback info" id="bagi-fb-soal">Catatan: pangkat atas boleh lebih kecil dari bawah &mdash; hasilnya akan berpangkat negatif.</div>
         </div>
 
         <!-- Step 2: penjabaran -->
@@ -260,25 +270,35 @@
             <div class="exp-feedback info" id="bagi-fb-penjabaran"></div>
         </div>
 
-        <!-- Step 3: hasil -->
+        <!-- Step 3: hasil (pecahan — coret faktor yang sama) -->
         <div class="exp-step is-hidden" id="bagi-hasil-sec">
-            <div class="exp-step-label"><span class="exp-step-num">3</span> Sederhanakan (coret faktor yang sama), tuliskan sisanya</div>
+            <div class="exp-step-label"><span class="exp-step-num">3</span> Coret faktor yang sama, tuliskan sisa di atas / bawah</div>
             <div class="exp-eq">
                 <span class="op">=</span>
-                <span class="expand-box" id="bagi-box-hasil"></span>
+                <div class="frac">
+                    <span class="expand-box" id="bagi-box-hasilAtas"></span>
+                    <div class="frac-line"></div>
+                    <span class="expand-box" id="bagi-box-hasilBawah"></span>
+                </div>
             </div>
             <div class="kit-btn-row">
-                <button class="kit-btn accent" onclick="addHasil('bagi')">Hasil <span class="counter-pill" id="bagi-cnt-hasil">0</span></button>
+                <button class="kit-btn accent" onclick="addHasilFrac('atas')">Hasil Atas <span class="counter-pill" id="bagi-cnt-hasilAtas">0</span></button>
+                <button class="kit-btn accent" onclick="addHasilFrac('bawah')">Hasil Bawah <span class="counter-pill" id="bagi-cnt-hasilBawah">0</span></button>
             </div>
             <div class="exp-feedback info" id="bagi-fb-hasil"></div>
         </div>
 
-        <!-- Step 4: jawaban pangkat -->
+        <!-- Step 4: jawaban pangkat (persamaan m − n) -->
         <div class="exp-step is-hidden" id="bagi-jawab-sec">
-            <div class="exp-step-label"><span class="exp-step-num">4</span> Tuliskan dalam bentuk pangkat</div>
+            <div class="exp-step-label"><span class="exp-step-num">4</span> Tuliskan sebagai satu pangkat: isi pangkat, tanda, pangkat</div>
             <div class="exp-eq">
                 <span class="op">=</span>
-                <span class="base">a<span class="sup"><input type="number" class="pangkat-input" id="bagi-jawab" style="width:48px;"></span></span>
+                <span class="base" style="font-size:2rem;">a</span>
+                <span class="answer-exp">
+                    <input type="number" class="pangkat-input" id="bagi-jawab-a">
+                    <input type="text" class="pangkat-input op-input" id="bagi-jawab-op" maxlength="1">
+                    <input type="number" class="pangkat-input" id="bagi-jawab-b">
+                </span>
             </div>
             <div class="exp-feedback" id="bagi-fb-jawab"></div>
         </div>
@@ -297,22 +317,19 @@
     // ===== State & configuration =====
     const ST = {
         kali: { n: null, m: null, left: 0, right: 0, hasil: 0 },
-        bagi: { n: null, m: null, atas: 0, bawah: 0, hasil: 0 }
+        bagi: { n: null, m: null, atas: 0, bawah: 0, hasilAtas: 0, hasilBawah: 0 }
     };
     const CFG = {
         kali: {
             sides: ['left', 'right'],
             target: (s, side) => side === 'left' ? s.n : s.m,
             expectedHasil: s => s.n + s.m,
-            answer: s => s.n + s.m,
-            sign: '+'
+            answer: s => s.n + s.m
         },
         bagi: {
             sides: ['atas', 'bawah'],
             target: (s, side) => side === 'atas' ? s.n : s.m,
-            expectedHasil: s => s.n - s.m,
-            answer: s => s.n - s.m,
-            sign: '&minus;'
+            answer: s => s.n - s.m
         }
     };
 
@@ -343,9 +360,57 @@
         }
         return html;
     }
+    // Pembagian: selalu diawali "1", lalu n buah "· a" (1 · a · a ...). n=0 → "1".
+    function dotsOne(n) {
+        let html = '<span class="a-term one">1</span>';
+        for (let i = 0; i < n; i++) {
+            html += '<span class="dot">&middot;</span>';
+            html += '<span class="a-term' + (i === n - 1 ? ' pop' : '') + '">a</span>';
+        }
+        return html;
+    }
     function renderBox(tab, side) {
-        el(tab + '-box-' + side).innerHTML = dots(ST[tab][side]);
-        if (el(tab + '-cnt-' + side)) el(tab + '-cnt-' + side).textContent = ST[tab][side];
+        const n = ST[tab][side];
+        el(tab + '-box-' + side).innerHTML = (tab === 'bagi') ? dotsOne(n) : dots(n);
+        if (el(tab + '-cnt-' + side)) el(tab + '-cnt-' + side).textContent = n;
+    }
+
+    // ===== Pembagian: hasil berupa pecahan (Hasil Atas / Hasil Bawah) =====
+    // Sisa faktor setelah dicoret: atas = maks(0, n-m), bawah = maks(0, m-n).
+    // Sisi yang habis dicoret otomatis jadi "1" (dotsOne(0)).
+    function resultTarget(side) {
+        const s = ST.bagi;
+        if (s.n == null) return NaN;
+        return side === 'atas' ? Math.max(0, s.n - s.m) : Math.max(0, s.m - s.n);
+    }
+    function renderResultBagi() {
+        [['atas', 'hasilAtas'], ['bawah', 'hasilBawah']].forEach(([side, key]) => {
+            const count = ST.bagi[key];
+            el('bagi-box-' + key).innerHTML = dotsOne(count);
+            el('bagi-cnt-' + key).textContent = count;
+        });
+    }
+
+    // ===== Reset langkah 2-4 =====
+    function resetSteps(tab) {
+        const s = ST[tab];
+        if (tab === 'kali') {
+            s.left = s.right = s.hasil = 0;
+            renderBox('kali', 'left'); renderBox('kali', 'right'); renderBox('kali', 'hasil');
+        } else {
+            s.atas = s.bawah = s.hasilAtas = s.hasilBawah = 0;
+            renderBox('bagi', 'atas'); renderBox('bagi', 'bawah'); renderResultBagi();
+        }
+        ['-jawab-a', '-jawab-op', '-jawab-b'].forEach(suf => {
+            const e = el(tab + suf);
+            if (e) { e.value = ''; e.classList.remove('correct', 'wrong'); }
+        });
+        show(tab + '-hasil-sec', false);
+        show(tab + '-jawab-sec', false);
+        show(tab + '-final', false);
+        fb(tab + '-fb-penjabaran', '', 'info');
+        fb(tab + '-fb-hasil', '', 'info');
+        fb(tab + '-fb-jawab', '', 'info');
     }
 
     // ===== Step 1: baca pangkat =====
@@ -358,34 +423,22 @@
         el(tab + '-n').classList.toggle('correct', validN);
         el(tab + '-m').classList.toggle('correct', validM);
 
-        // reset langkah lanjutan setiap pangkat berubah
-        s.left = s.right = s.atas = s.bawah = s.hasil = 0;
-        CFG[tab].sides.forEach(sd => renderBox(tab, sd));
-        renderBox(tab, 'hasil');
-        if (el(tab + '-jawab')) { el(tab + '-jawab').value = ''; el(tab + '-jawab').classList.remove('correct', 'wrong'); }
-        show(tab + '-hasil-sec', false);
-        show(tab + '-jawab-sec', false);
-        show(tab + '-final', false);
-        fb(tab + '-fb-penjabaran', '', 'info');
-        fb(tab + '-fb-hasil', '', 'info');
-        fb(tab + '-fb-jawab', '', 'info');
+        s.n = s.m = null;           // reset dulu; diisi lagi bila valid
+        resetSteps(tab);            // butuh n=null agar kotak hasil belum menebak "1"
 
         if (!validN || !validM) {
-            s.n = s.m = null;
             show(tab + '-penjabaran', false);
             if (el(tab + '-n').value || el(tab + '-m').value)
                 fb(tab + '-fb-soal', 'Isi kedua pangkat dengan bilangan bulat positif.', 'info');
             else fb(tab + '-fb-soal', '', 'info');
             return;
         }
-        if (tab === 'bagi' && nv <= mv) {
-            s.n = s.m = null;
-            show(tab + '-penjabaran', false);
-            fb(tab + '-fb-soal', 'Pangkat pembilang (atas) harus lebih besar dari penyebut (bawah).', 'salah');
-            return;
-        }
         s.n = nv; s.m = mv;
-        fb(tab + '-fb-soal', '', 'info');
+        // Pembagian: atas boleh <, =, atau > bawah (aturan 11-12 KIT).
+        if (tab === 'bagi')
+            fb('bagi-fb-soal', 'Pangkat atas boleh lebih kecil dari bawah — hasilnya akan berpangkat negatif.', 'info');
+        else
+            fb(tab + '-fb-soal', '', 'info');
         show(tab + '-penjabaran', true);
         checkPenjabaran(tab);
     }
@@ -409,6 +462,7 @@
         if (done) {
             fb(tab + '-fb-penjabaran', 'Sesuai definisi eksponen ✓', 'benar');
             show(tab + '-hasil-sec', true);
+            if (tab === 'bagi') { renderResultBagi(); checkHasilBagi(); }
         } else {
             const parts = CFG[tab].sides.map(sd => sd + ': ' + s[sd] + '/' + CFG[tab].target(s, sd));
             fb(tab + '-fb-penjabaran', 'Klik tombol hingga jumlah a sesuai pangkat — ' + parts.join(', '), 'info');
@@ -418,7 +472,7 @@
         }
     }
 
-    // ===== Step 3: hasil =====
+    // ===== Step 3 (perkalian): hasil satu kotak =====
     function addHasil(tab) {
         const s = ST[tab];
         const expected = CFG[tab].expectedHasil(s);
@@ -434,10 +488,7 @@
         const s = ST[tab];
         const expected = CFG[tab].expectedHasil(s);
         if (s.hasil === expected) {
-            const src = tab === 'kali'
-                ? 'jumlah a kiri (' + s.left + ') + a kanan (' + s.right + ')'
-                : 'jumlah a atas (' + s.atas + ') − a bawah (' + s.bawah + ')';
-            fb(tab + '-fb-hasil', 'Jumlah a pada hasil sesuai dengan ' + src + ' ✓', 'benar');
+            fb(tab + '-fb-hasil', 'Jumlah a pada hasil sesuai dengan jumlah a kiri (' + s.left + ') + a kanan (' + s.right + ') ✓', 'benar');
             show(tab + '-jawab-sec', true);
         } else {
             fb(tab + '-fb-hasil', 'Klik "Hasil" untuk menambahkan a. Jumlah sekarang: ' + s.hasil, 'info');
@@ -446,57 +497,109 @@
         }
     }
 
-    // ===== Step 4: jawaban pangkat =====
+    // ===== Step 3 (pembagian): hasil berupa pecahan =====
+    function addHasilFrac(side) {
+        const s = ST.bagi;
+        if (s.n == null) return;
+        const key = side === 'atas' ? 'hasilAtas' : 'hasilBawah';
+        if (s[key] >= resultTarget(side)) {
+            fb('bagi-fb-hasil', 'Perbaiki lagi (jumlah a pada hasil ' + side + ' sudah cukup).', 'salah');
+            return;
+        }
+        s[key]++;
+        renderResultBagi();
+        checkHasilBagi();
+    }
+    function checkHasilBagi() {
+        const s = ST.bagi;
+        const done = s.hasilAtas === resultTarget('atas') && s.hasilBawah === resultTarget('bawah');
+        if (done) {
+            let msg;
+            if (s.n > s.m) msg = 'Faktor bawah habis dicoret, sisa ' + (s.n - s.m) + ' faktor a di atas ✓';
+            else if (s.n < s.m) msg = 'Faktor atas habis dicoret, sisa ' + (s.m - s.n) + ' faktor a di bawah ✓';
+            else msg = 'Semua faktor saling mencoret, hasilnya 1 ✓';
+            fb('bagi-fb-hasil', msg, 'benar');
+            show('bagi-jawab-sec', true);
+        } else {
+            fb('bagi-fb-hasil', 'Coret faktor yang sama, lalu klik "Hasil Atas" / "Hasil Bawah" untuk sisa faktornya.', 'info');
+            show('bagi-jawab-sec', false);
+            show('bagi-final', false);
+        }
+    }
+
+    // ===== Step 4: jawaban pangkat sebagai persamaan (m + n / m − n) =====
     function checkJawab(tab) {
         const s = ST[tab];
-        const input = el(tab + '-jawab');
-        const v = parseInt(input.value);
-        const ans = CFG[tab].answer(s);
-        input.classList.remove('correct', 'wrong');
-        if (input.value.trim() === '' || isNaN(v)) {
+        if (s.n == null) return;
+        const aEl = el(tab + '-jawab-a'), opEl = el(tab + '-jawab-op'), bEl = el(tab + '-jawab-b');
+        const av = parseInt(aEl.value);
+        const bv = parseInt(bEl.value);
+        const opRaw = (opEl.value || '').trim();
+        const wantOp = tab === 'kali' ? '+' : '−';
+
+        const filledA = aEl.value.trim() !== '';
+        const filledB = bEl.value.trim() !== '';
+        const filledOp = opRaw !== '';
+        const okA = av === s.n;
+        const okB = bv === s.m;
+        const okOp = tab === 'kali' ? (opRaw === '+') : (opRaw === '-' || opRaw === '−');
+
+        [[aEl, okA, filledA], [opEl, okOp, filledOp], [bEl, okB, filledB]].forEach(([e, ok, filled]) => {
+            e.classList.remove('correct', 'wrong');
+            if (filled) e.classList.add(ok ? 'correct' : 'wrong');
+        });
+
+        if (!(filledA && filledOp && filledB)) {
             fb(tab + '-fb-jawab', '', 'info');
             show(tab + '-final', false);
             return;
         }
-        if (v === ans) {
-            input.classList.add('correct');
+        if (okA && okOp && okB) {
             fb(tab + '-fb-jawab', 'Jawaban anda benar ✓', 'benar');
             showFinal(tab);
         } else {
-            input.classList.add('wrong');
-            fb(tab + '-fb-jawab', 'Perbaiki lagi (pangkat harus sama dengan jumlah a pada hasil).', 'salah');
+            fb(tab + '-fb-jawab', 'Perbaiki lagi — isi: pangkat pertama, tanda "' + wantOp + '", pangkat kedua.', 'salah');
             show(tab + '-final', false);
         }
     }
     function showFinal(tab) {
-        const s = ST[tab], c = CFG[tab];
-        const op = tab === 'kali' ? '&times;' : '&divide;';
+        if (tab === 'kali') showFinalKali(); else showFinalBagi();
+    }
+    function showFinalKali() {
+        const s = ST.kali;
         const formula =
-            'a<sup>' + s.n + '</sup> ' + op + ' a<sup>' + s.m + '</sup> = ' +
-            'a<sup>' + s.n + c.sign + s.m + '</sup> = a<sup>' + c.answer(s) + '</sup>';
-        const rule = tab === 'kali'
-            ? 'Sifat: a<sup>n</sup> &times; a<sup>m</sup> = a<sup>n+m</sup>'
-            : 'Sifat: a<sup>n</sup> &divide; a<sup>m</sup> = a<sup>n&minus;m</sup>';
-        el(tab + '-final').innerHTML =
+            'a<sup>' + s.n + '</sup> &times; a<sup>' + s.m + '</sup> = ' +
+            'a<sup>' + s.n + '+' + s.m + '</sup> = a<sup>' + (s.n + s.m) + '</sup>';
+        el('kali-final').innerHTML =
             '<div class="final-banner"><div class="formula">' + formula + '</div>' +
-            '<div class="caption">' + rule + '</div></div>';
-        show(tab + '-final', true);
+            '<div class="caption">Sifat: a<sup>n</sup> &times; a<sup>m</sup> = a<sup>n+m</sup></div></div>';
+        show('kali-final', true);
+    }
+    function showFinalBagi() {
+        const s = ST.bagi;
+        const diff = s.n - s.m;
+        const diffSup = diff < 0 ? '&minus;' + (-diff) : String(diff);
+        let formula =
+            'a<sup>' + s.n + '</sup> &divide; a<sup>' + s.m + '</sup> = ' +
+            'a<sup>' + s.n + '&minus;' + s.m + '</sup> = a<sup>' + diffSup + '</sup>';
+        let caption = 'Sifat: a<sup>n</sup> &divide; a<sup>m</sup> = a<sup>n&minus;m</sup>';
+        if (diff < 0) {
+            formula += ' = 1 / a<sup>' + (-diff) + '</sup>';
+            caption += ' &mdash; pangkat negatif: a<sup>&minus;k</sup> = 1/a<sup>k</sup>';
+        } else if (diff === 0) {
+            formula += ' = 1';
+            caption += ' &mdash; a<sup>0</sup> = 1';
+        }
+        el('bagi-final').innerHTML =
+            '<div class="final-banner"><div class="formula">' + formula + '</div>' +
+            '<div class="caption">' + caption + '</div></div>';
+        show('bagi-final', true);
     }
 
     // ===== Clear =====
     function clearTab(tab) {
         const s = ST[tab];
-        s.left = s.right = s.atas = s.bawah = s.hasil = 0;
-        CFG[tab].sides.forEach(sd => renderBox(tab, sd));
-        renderBox(tab, 'hasil');
-        el(tab + '-jawab').value = '';
-        el(tab + '-jawab').classList.remove('correct', 'wrong');
-        fb(tab + '-fb-penjabaran', '', 'info');
-        fb(tab + '-fb-hasil', '', 'info');
-        fb(tab + '-fb-jawab', '', 'info');
-        show(tab + '-hasil-sec', false);
-        show(tab + '-jawab-sec', false);
-        show(tab + '-final', false);
+        resetSteps(tab);
         if (s.n != null) { show(tab + '-penjabaran', true); checkPenjabaran(tab); }
     }
 
@@ -505,10 +608,11 @@
         ['kali', 'bagi'].forEach(tab => {
             el(tab + '-n').addEventListener('input', () => readPangkat(tab));
             el(tab + '-m').addEventListener('input', () => readPangkat(tab));
-            el(tab + '-jawab').addEventListener('input', () => checkJawab(tab));
-            CFG[tab].sides.forEach(sd => renderBox(tab, sd));
-            renderBox(tab, 'hasil');
+            ['-jawab-a', '-jawab-op', '-jawab-b'].forEach(suf =>
+                el(tab + suf).addEventListener('input', () => checkJawab(tab)));
         });
+        renderBox('kali', 'left'); renderBox('kali', 'right'); renderBox('kali', 'hasil');
+        renderBox('bagi', 'atas'); renderBox('bagi', 'bawah'); renderResultBagi();
     });
 </script>
 }
